@@ -6,7 +6,6 @@
 <title>Shopping List</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
     --bg: #ffffff; --bg2: #f5f5f3; --bg3: #eeede9;
     --text: #1a1a1a; --text2: #666660; --text3: #999990;
@@ -14,12 +13,8 @@
     --green-bg: #eaf3de; --green-text: #3b6d11;
     --blue-bg: #e6f1fb; --blue-text: #185fa5;
     --red-bg: #fcebeb; --red-text: #a32d2d;
-    --amber-bg: #faeeda; --amber-text: #854f0b;
-    --purple-bg: #eeedfe; --purple-text: #534ab7;
-    --teal-bg: #e1f5ee; --teal-text: #0f6e56;
     --radius: 10px; --radius-sm: 7px;
   }
-
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #1c1c1a; --bg2: #252523; --bg3: #2e2e2b;
@@ -28,12 +23,8 @@
       --green-bg: #173404; --green-text: #c0dd97;
       --blue-bg: #042c53; --blue-text: #b5d4f4;
       --red-bg: #501313; --red-text: #f7c1c1;
-      --amber-bg: #412402; --amber-text: #fac775;
-      --purple-bg: #26215c; --purple-text: #cecbf6;
-      --teal-bg: #04342c; --teal-text: #9fe1cb;
     }
   }
-
   html, body { height: 100%; background: var(--bg3); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); }
   .app { max-width: 480px; margin: 0 auto; min-height: 100%; background: var(--bg3); display: flex; flex-direction: column; }
   .header { background: var(--bg); border-bottom: 0.5px solid var(--border); padding: 1rem 1rem 0; }
@@ -56,14 +47,18 @@
   .btn-primary { padding: 11px 18px; font-size: 15px; font-weight: 600; border: none; border-radius: var(--radius); background: var(--text); color: var(--bg); cursor: pointer; white-space: nowrap; }
   .btn-primary:active { opacity: 0.8; }
   .empty { text-align: center; padding: 3rem 1rem; color: var(--text2); font-size: 15px; line-height: 1.6; }
-  .item-card { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); margin-bottom: 7px; transition: opacity 0.2s; }
+  .item-card { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); margin-bottom: 7px; transition: opacity 0.2s; cursor: grab; user-select: none; }
+  .item-card.dragging { opacity: 0.4; cursor: grabbing; }
+  .item-card.drag-over { border-color: var(--blue-text); background: var(--blue-bg); }
   .item-card.checked { opacity: 0.4; }
   .item-card.checked .item-name { text-decoration: line-through; }
+  .drag-handle { color: var(--text3); font-size: 16px; cursor: grab; flex-shrink: 0; padding: 0 2px; }
   .check-btn { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--border2); background: transparent; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
   .check-btn.done { background: var(--green-bg); border-color: var(--green-text); }
   .check-btn.done::after { content: ''; display: block; width: 6px; height: 10px; border: 2px solid var(--green-text); border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); }
   .item-name { flex: 1; font-size: 15px; }
-  .badge { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 99px; flex-shrink: 0; white-space: nowrap; }
+  .badge { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 99px; flex-shrink: 0; white-space: nowrap; cursor: pointer; }
+  .badge:hover { filter: brightness(0.92); }
   .del-btn { width: 28px; height: 28px; border: none; background: transparent; color: var(--text3); cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; border-radius: 6px; line-height: 1; }
   .del-btn:active { background: var(--red-bg); color: var(--red-text); }
   .cat-group { margin-bottom: 1.25rem; }
@@ -74,7 +69,6 @@
   .progress-fill { height: 100%; background: var(--green-text); border-radius: 3px; transition: width 0.3s; }
   .route-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
   .route-header h2 { font-size: 17px; font-weight: 600; }
-  .btn-optimize { padding: 9px 16px; font-size: 14px; font-weight: 600; border: none; border-radius: var(--radius-sm); background: var(--blue-bg); color: var(--blue-text); cursor: pointer; }
   .route-step { display: flex; gap: 14px; padding: 12px 0; border-bottom: 0.5px solid var(--border); }
   .route-step:last-child { border-bottom: none; }
   .step-num { width: 26px; height: 26px; border-radius: 50%; background: var(--bg2); border: 0.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text2); flex-shrink: 0; margin-top: 1px; }
@@ -85,6 +79,17 @@
   .clear-btn { width: 100%; margin-top: 1rem; padding: 12px; font-size: 14px; color: var(--text2); border: 0.5px solid var(--border); border-radius: var(--radius); background: transparent; cursor: pointer; }
   .clear-btn:active { background: var(--bg2); }
   .hint { font-size: 13px; color: var(--text3); text-align: center; padding: 0.75rem 0 0; }
+  /* Category picker modal */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: flex-end; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--bg); border-radius: 16px 16px 0 0; width: 100%; max-width: 480px; max-height: 70vh; overflow-y: auto; padding: 1rem; }
+  .modal-title { font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; }
+  .cat-option { display: flex; align-items: center; justify-content: space-between; padding: 12px 4px; border-bottom: 0.5px solid var(--border); cursor: pointer; font-size: 15px; }
+  .cat-option:last-child { border-bottom: none; }
+  .cat-option:active { background: var(--bg2); }
+  .cat-option.selected { font-weight: 600; }
+  .cat-option .cat-tick { color: var(--green-text); font-size: 18px; }
+  /* Loading */
   .loading-screen { position: fixed; inset: 0; background: var(--bg3); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; z-index: 100; }
   .loading-screen p { font-size: 15px; color: var(--text2); }
   .spinner { width: 28px; height: 28px; border: 2.5px solid var(--border2); border-top-color: var(--text); border-radius: 50%; animation: spin 0.7s linear infinite; }
@@ -96,6 +101,14 @@
 <div class="loading-screen" id="loading">
   <div class="spinner"></div>
   <p>Connecting...</p>
+</div>
+
+<!-- Category picker modal -->
+<div class="modal-overlay" id="cat-modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-title">Change category</div>
+    <div id="cat-options"></div>
+  </div>
 </div>
 
 <div class="app" style="display:none" id="app">
@@ -118,16 +131,14 @@
         <button class="btn-primary" onclick="addItem()">Add</button>
       </div>
       <div id="add-list"></div>
-      <p class="hint">Items sync instantly to all devices</p>
+      <p class="hint">Tap category badge to reassign • drag to reorder</p>
     </div>
     <div id="view-list" class="view">
       <div id="list-progress"></div>
       <div id="list-container"></div>
     </div>
     <div id="view-route" class="view">
-      <div class="route-header">
-        <h2>Store route</h2>
-      </div>
+      <div class="route-header"><h2>Store route</h2></div>
       <div id="route-progress"></div>
       <div id="route-container"></div>
     </div>
@@ -151,65 +162,80 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getDatabase(firebaseApp);
 const itemsRef = ref(db, 'items');
+const dictRef  = ref(db, 'dictionary'); // item name → category overrides
 
-// Store categories in exact walk order. Each has a display name and keyword list.
 const CATEGORIES = [
-  { name: 'Hem',              words: ['lakan','synål','synål','dynvar','dynvar','blommor','blomma','kudde','kuddfodral','påslakan'] },
-  { name: 'Bygg',             words: ['handskar','tejp','lim','måla','färg','skruv','spik','borr','verktyg','byggmaterial'] },
-  { name: 'Trädgård',         words: ['mull','jord','frön','frö','kruka','plantor','planta','gödsel','trädgård'] },
-  { name: 'Teknik',           words: ['adapter','kabel','kablar','gas','batteri','sladd','laddare','hörlurar','usb','kontakt'] },
-  { name: 'Ost',              words: ['ost','riven ost','getost','brie','camembert','cheddar','mozzarella','parmesan','fetaost','feta','gouda','emmental'] },
-  { name: 'Frukter',          words: ['banan','bananer','päron','lök','potatis','äpple','apelsin','citron','lime','mango','vindruvor','jordgubbar','hallon','blåbär','kiwi','ananas','melon','plommon','persika','körsbär','tomat','tomater','avokado','gurka','paprika','broccoli','blomkål','morötter','morot','sallad','spenat','majs','ärtor','svamp','purjolök','selleri','rödlök','vitlök','ingefära','chili','rotsaker','rödbeta','palsternacka','kålrot'] },
-  { name: 'Snacks',           words: ['chips','nötter','popcorn','godis','kex','krackers','jordnötter','mandlar','cashewnötter','pistaschnötter','russin','torkad frukt','müslibar','proteinbar','riskaka','majssnacks'] },
-  { name: 'Mjölkprodukter',   words: ['mjölk','yoghurt','youghurt','keso','gräddfil','grädde','smör','kvarg','fil','filmjölk','havremjölk','oatly','ägg','crème fraîche','cream cheese','kesella','matyoghurt','turkisk yoghurt','turkisk youghurt'] },
-  { name: 'Kött',             words: ['malet','malet kött','maltkött','maletkött','kyckling','kycklingfilé','kycklingflarn','fläsk','nöt','lamm','korv','bacon','skinka','köttfärs','biff','entrecote','fläskfile','lövbiff','köttbullar','köttbulle','fågelfilé','fisk','lax','torsk','räkor','sill','tonfisk','laxfile','fiskpinnar'] },
-  { name: 'Pasta',            words: ['pasta','penne','makaroner','makaroni','spagetti','spaghetti','tagliatelle','fusilli','rigatoni','lasagne','nudlar','vermicelli','orzo'] },
-  { name: 'Taco',             words: ['tortilla','salsa','tacokrydda','taco','nacho','nachos','guacamole','tacoskal','burrito','enchilada','jalapeño','tacosåstortilla'] },
-  { name: 'Torrmat & Såser',  words: ['kryddor','gröt','majs','ris','quinoa','couscous','bulgur','linser','bönor','kikärtor','konserver','ketchup','senap','majonnäs','soja','sojasås','olja','olivolja','vinäger','honung','syrup','mjöl','socker','salt','buljong','fond','gräddsås','tomatsås','tomatpuré','curry','paprika krydda','timjan','oregano','basilika','kanel','ingefära','mjöl','havregryn','cornflakes','müsli','flingor'] },
-  { name: 'Bröd',             words: ['bröd','knäckebröd','kläckebröd','käckebröd','bulla','bullor','croissant','toast','levain','surdeg','bagel','pitabröd','tunnbröd','rågbröd','franskbröd','formfranska','wienerbröd'] },
-  { name: 'Sylt & Kaffe',     words: ['sylt','peanutbutter','jordnötssmör','kaffe','te','kakao','varm choklad','nutella','marmelad','honungsmelon','honung','kaffefilter','nespresso','kaffekapslar'] },
-  { name: 'Hundmat',          words: ['hundkorv','hundben','hundgodis','hundfoder','hundmat','kattmat','kattsand','kattgodis','hundbricka','katthalsband'] },
-  { name: 'Godis',            words: ['lösgodis','choklad','skumgodis','lakrits','karamell','gelégodis','gummibjörnar','polly','ahlgrens','fazer','marabou','daim','kit kat','twix','snickers','bounty','ferrero'] },
-  { name: 'Hygien',           words: ['deodorant','schampo','torrschampo','balsam','tvål','duschgel','tandkräm','tandborste','raklödder','rakkniv','rakblad','bomull','kondomer','menskopp','tamponger','dambinda','lotion','kräm','ansiktskräm','solkräm','parfym','hårvax','hårgel','nässpray','ögondroppar'] },
-  { name: 'Tvätt',            words: ['diskmedel','tvättmedel','sköljmedel','diskmaskin','diskmaskinspulver','diskmaskinssalt','torkmedel','tvättlapp','svamp','städ','allrengöring','fönsterputsmedel','toalettpapper','hushållspapper','pappersservetter','sopsäckar','plastpåsar','aluminiumfolie','plastfolie','bakplåtspapper'] },
-  { name: 'Kyldisk',          words: ['pizza','glass','franskisar','sopprötter','fryst','fryspizza','färdigmat','salladsbar','smörgås','wraps','sushi','hummus','tzatziki','taramasalata','dipp','röra','paté','leverpastej','färskost'] },
-  { name: 'Övrigt',           words: [] },
+  { name: 'Hem',             words: ['lakan','synål','dynvar','blommor','blomma','kudde','kuddfodral','påslakan'] },
+  { name: 'Bygg',            words: ['tejp','lim','måla','färg','skruv','spik','borr','verktyg','byggmaterial'] },
+  { name: 'Trädgård',        words: ['mull','jord','frön','frö','kruka','plantor','planta','gödsel','trädgård'] },
+  { name: 'Teknik',          words: ['adapter','kabel','kablar','gas','batteri','sladd','laddare','hörlurar','usb','kontakt'] },
+  { name: 'Ost',             words: ['riven ost','getost','brie','camembert','cheddar','mozzarella','parmesan','fetaost','feta','gouda','emmental'] },
+  { name: 'Frukter',         words: ['banan','bananer','päron','äpple','apelsin','citron','lime','mango','vindruvor','jordgubbar','hallon','blåbär','kiwi','ananas','melon','plommon','persika','körsbär','avokado','frukt'] },
+  { name: 'Grönsaker',       words: ['lök','potatis','tomat','tomater','gurka','paprika','broccoli','blomkål','morötter','morot','sallad','spenat','ärtor','svamp','purjolök','selleri','rödlök','vitlök','ingefära','chili','rödbeta','palsternacka','kålrot','rotsaker'] },
+  { name: 'Snacks',          words: ['chips','nötter','popcorn','kex','krackers','jordnötter','mandlar','cashewnötter','pistaschnötter','russin','torkad frukt','müslibar','proteinbar','riskaka','majssnacks'] },
+  { name: 'Mjölkprodukter',  words: ['mjölk','yoghurt','youghurt','keso','gräddfil','grädde','smör','kvarg','fil','filmjölk','havremjölk','oatly','ägg','crème fraîche','cream cheese','kesella','matyoghurt','turkisk yoghurt','turkisk youghurt'] },
+  { name: 'Kött',            words: ['malet','maletkött','maltkött','köttfärs','kyckling','kycklingfilé','kycklingflarn','fläsk','nötkött','lamm','korv','bacon','skinka','biff','entrecote','lövbiff','köttbullar','fisk','lax','torsk','räkor','sill','tonfisk','fiskpinnar'] },
+  { name: 'Pasta',           words: ['pasta','penne','makaroner','makaroni','spagetti','spaghetti','tagliatelle','fusilli','rigatoni','lasagne','nudlar'] },
+  { name: 'Taco',            words: ['tortilla','salsa','tacokrydda','taco','nacho','nachos','guacamole','tacoskal','burrito','enchilada','jalapeño'] },
+  { name: 'Torrmat & Såser', words: ['kryddor','gröt','majs','ris','quinoa','couscous','bulgur','linser','bönor','kikärtor','konserver','ketchup','senap','majonnäs','soja','olja','olivolja','vinäger','honung','mjöl','socker','salt','buljong','fond','tomatsås','tomatpuré','curry','timjan','oregano','basilika','kanel','havregryn','cornflakes','müsli','flingor','gräddsås'] },
+  { name: 'Bröd',            words: ['bröd','knäckebröd','käckebröd','bulla','bullor','croissant','toast','levain','surdeg','bagel','pitabröd','tunnbröd','rågbröd','franskbröd','wienerbröd'] },
+  { name: 'Sylt & Kaffe',    words: ['sylt','peanutbutter','jordnötssmör','kaffe','te','kakao','nutella','marmelad','honung','kaffefilter','nespresso','kaffekapslar'] },
+  { name: 'Hundmat',         words: ['hundkorv','hundben','hundgodis','hundfoder','hundmat','kattmat','kattsand','kattgodis'] },
+  { name: 'Godis',           words: ['lösgodis','choklad','skumgodis','lakrits','karamell','gelégodis','gummibjörnar','polly','marabou','daim','snickers'] },
+  { name: 'Hygien',          words: ['deodorant','schampo','torrschampo','balsam','tvål','duschgel','tandkräm','tandborste','raklödder','rakkniv','bomull','lotion','ansiktskräm','solkräm','hårvax','hårgel'] },
+  { name: 'Tvätt',           words: ['diskmedel','tvättmedel','sköljmedel','diskmaskinspulver','diskmaskinssalt','torkmedel','allrengöring','toalettpapper','hushållspapper','pappersservetter','sopsäckar','plastpåsar','aluminiumfolie','plastfolie','bakplåtspapper'] },
+  { name: 'Kyldisk',         words: ['pizza','glass','franskisar','sopprötter','fryspizza','färdigmat','sushi','hummus','tzatziki','dipp','röra','paté','leverpastej'] },
+  { name: 'Övrigt',          words: [] },
 ];
 
-function categorize(name) {
-  const n = name.toLowerCase().trim();
-  for (const cat of CATEGORIES) {
-    if (cat.words.some(w => n.includes(w.toLowerCase()) || w.toLowerCase().includes(n))) {
-      return cat.name;
-    }
-  }
-  return 'Övrigt';
-}
+// Handskar belongs to Bygg in this store, not Hygien
+// (kept separate from keyword list to show intent clearly)
+const EXTRA = { 'handskar': 'Bygg', 'handske': 'Bygg' };
+
+const BADGE_COLORS = [
+  '#e6f1fb','#faeeda','#eaf3de','#eeedfe','#fcebeb','#e1f5ee',
+  '#faeeda','#e6f1fb','#eaf3de','#fcebeb','#eeedfe','#faeeda',
+  '#e1f5ee','#faeeda','#fcebeb','#eaf3de','#eeedfe','#e1f5ee','#faeeda','#f5f5f3'
+];
+const BADGE_TEXT = [
+  '#185fa5','#854f0b','#3b6d11','#534ab7','#a32d2d','#0f6e56',
+  '#854f0b','#185fa5','#3b6d11','#a32d2d','#534ab7','#854f0b',
+  '#0f6e56','#854f0b','#a32d2d','#3b6d11','#534ab7','#0f6e56','#854f0b','#666660'
+];
 
 function getCatIndex(catName) {
   const i = CATEGORIES.findIndex(c => c.name === catName);
   return i === -1 ? CATEGORIES.length - 1 : i;
 }
 
-const BADGE_COLORS = [
-  '#e6f1fb','#eaf3de','#faeeda','#fcebeb','#eeedfe','#e1f5ee','#faeeda','#e6f1fb',
-  '#eaf3de','#fcebeb','#faeeda','#eeedfe','#e1f5ee','#faeeda','#fcebeb','#eaf3de',
-  '#eeedfe','#e1f5ee','#faeeda','#f5f5f3'
-];
-const BADGE_TEXT = [
-  '#185fa5','#3b6d11','#854f0b','#a32d2d','#534ab7','#0f6e56','#854f0b','#185fa5',
-  '#3b6d11','#a32d2d','#854f0b','#534ab7','#0f6e56','#854f0b','#a32d2d','#3b6d11',
-  '#534ab7','#0f6e56','#854f0b','#666660'
-];
-
 function badgeStyle(catName) {
   const i = getCatIndex(catName);
   return `background:${BADGE_COLORS[i % BADGE_COLORS.length]};color:${BADGE_TEXT[i % BADGE_TEXT.length]}`;
 }
 
+function categorize(name) {
+  const n = name.toLowerCase().trim();
+  // Check extra overrides first
+  for (const [word, cat] of Object.entries(EXTRA)) {
+    if (n.includes(word)) return cat;
+  }
+  // Check dictionary overrides from Firebase
+  const key = n.replace(/[^a-zåäö0-9]/g, '_');
+  if (dictionary[key]) return dictionary[key];
+  // Keyword matching
+  for (const cat of CATEGORIES) {
+    if (cat.words.some(w => n.includes(w.toLowerCase()))) return cat.name;
+  }
+  return 'Övrigt';
+}
+
 let items = {};
+let dictionary = {};
 let initialized = false;
+let dragId = null;
 const syncDot = document.getElementById('sync-dot');
+
+onValue(dictRef, snap => { dictionary = snap.val() || {}; });
 
 onValue(itemsRef, snap => {
   items = snap.val() || {};
@@ -234,7 +260,7 @@ async function addItem() {
   input.focus();
 }
 
-document.getElementById('item-input').addEventListener('keydown', e => { if(e.key==='Enter') addItem(); });
+document.getElementById('item-input').addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
 
 async function deleteItem(id) {
   syncDot.className = 'sync-dot syncing';
@@ -255,8 +281,98 @@ async function clearChecked() {
   }
 }
 
+// Category reassignment
+let modalItemId = null;
+
+function openCatModal(id) {
+  modalItemId = id;
+  const item = items[id]; if (!item) return;
+  document.getElementById('modal-item-name').textContent = item.name;
+  const list = document.getElementById('modal-cat-list');
+  list.innerHTML = CATEGORIES.map(c =>
+    `<button class="modal-cat-btn${item.cat === c.name ? ' current' : ''}" onclick="assignCat('${esc(c.name)}')">
+      <span>${esc(c.name)}</span>
+      ${item.cat === c.name ? '<span style="font-size:12px;opacity:0.6">current</span>' : ''}
+    </button>`
+  ).join('');
+  document.getElementById('cat-modal').classList.add('open');
+}
+
+async function assignCat(catName) {
+  if (!modalItemId) return;
+  const item = items[modalItemId];
+  if (!item) return;
+  syncDot.className = 'sync-dot syncing';
+  // Save to dictionary so this name always maps to this category
+  const key = item.name.toLowerCase().trim().replace(/[^a-zåäö0-9]/g, '_');
+  await set(ref(db, 'dictionary/' + key), catName);
+  await update(ref(db, 'items/' + modalItemId), { cat: catName, order: getCatIndex(catName) * 1000 + Date.now() % 1000 });
+  closeCatModal();
+}
+
+function closeCatModal(e) {
+  if (e && e.target !== document.getElementById('cat-modal')) return;
+  document.getElementById('cat-modal').classList.remove('open');
+  modalItemId = null;
+}
+
+// Drag and drop
+function onDragStart(e, id) {
+  dragId = id;
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+function onDragEnd(e) {
+  e.currentTarget.classList.remove('dragging');
+  document.querySelectorAll('.item-card').forEach(c => c.classList.remove('drag-over'));
+}
+function onDragOver(e, id) {
+  e.preventDefault();
+  if (id === dragId) return;
+  document.querySelectorAll('.item-card').forEach(c => c.classList.remove('drag-over'));
+  e.currentTarget.classList.add('drag-over');
+}
+async function onDrop(e, targetId) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if (!dragId || dragId === targetId) return;
+  const dragItem = items[dragId];
+  const targetItem = items[targetId];
+  if (!dragItem || !targetItem) return;
+  syncDot.className = 'sync-dot syncing';
+  const dragOrder = dragItem.order;
+  await update(ref(db, 'items/' + dragId), { order: targetItem.order });
+  await update(ref(db, 'items/' + targetId), { order: dragOrder });
+  dragId = null;
+}
+
+// Touch drag (simple swap on long press)
+let touchTimer = null;
+let touchDragId = null;
+function onTouchStart(e, id) {
+  touchTimer = setTimeout(() => {
+    touchDragId = id;
+    e.currentTarget.style.opacity = '0.5';
+  }, 400);
+}
+function onTouchEnd(e, id) {
+  clearTimeout(touchTimer);
+  if (touchDragId && touchDragId !== id) {
+    const dragItem = items[touchDragId];
+    const targetItem = items[id];
+    if (dragItem && targetItem) {
+      syncDot.className = 'sync-dot syncing';
+      const tmp = dragItem.order;
+      update(ref(db, 'items/' + touchDragId), { order: targetItem.order });
+      update(ref(db, 'items/' + id), { order: tmp });
+    }
+  }
+  document.querySelectorAll('.item-card').forEach(c => c.style.opacity = '');
+  touchDragId = null;
+}
+
 function sortedItems() {
-  return Object.values(items).sort((a, b) => getCatIndex(a.cat) - getCatIndex(b.cat));
+  return Object.values(items).sort((a, b) => getCatIndex(a.cat) - getCatIndex(b.cat) || (a.order||0) - (b.order||0));
 }
 
 function progressHTML() {
@@ -275,19 +391,29 @@ function actionButtons() {
 
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+function itemCardHTML(item, showBadge = true) {
+  return `<div class="item-card${item.checked?' checked':''}"
+    draggable="true"
+    ondragstart="onDragStart(event,'${item.id}')"
+    ondragend="onDragEnd(event)"
+    ondragover="onDragOver(event,'${item.id}')"
+    ondrop="onDrop(event,'${item.id}')"
+    ontouchstart="onTouchStart(event,'${item.id}')"
+    ontouchend="onTouchEnd(event,'${item.id}')">
+    <button class="check-btn${item.checked?' done':''}" onclick="toggleCheck('${item.id}')"></button>
+    <span class="item-name">${esc(item.name)}</span>
+    ${showBadge ? `<span class="badge" style="${badgeStyle(item.cat)}" onclick="openCatModal('${item.id}')" title="Tap to change category">${esc(item.cat)}</span>` : ''}
+    <button class="del-btn" onclick="deleteItem('${item.id}')">×</button>
+  </div>`;
+}
+
 function renderAll() { renderAdd(); renderList(); renderRoute(); }
 
 function renderAdd() {
   const el = document.getElementById('add-list');
-  const arr = Object.values(items).reverse();
+  const arr = Object.values(items).sort((a,b) => (b.order||0) - (a.order||0));
   if (!arr.length) { el.innerHTML = '<div class="empty">No items yet — add your first one above</div>'; return; }
-  el.innerHTML = arr.map(item =>
-    `<div class="item-card${item.checked?' checked':''}">
-      <button class="check-btn${item.checked?' done':''}" onclick="toggleCheck('${item.id}')"></button>
-      <span class="item-name">${esc(item.name)}</span>
-      <span class="badge" style="${badgeStyle(item.cat)}">${esc(item.cat)}</span>
-      <button class="del-btn" onclick="deleteItem('${item.id}')">×</button>
-    </div>`).join('') + actionButtons();
+  el.innerHTML = arr.map(item => itemCardHTML(item, true)).join('') + actionButtons();
 }
 
 function renderList() {
@@ -296,21 +422,13 @@ function renderList() {
   const arr = sortedItems();
   if (!arr.length) { prog.innerHTML=''; el.innerHTML='<div class="empty">Add items in the Add tab</div>'; return; }
   prog.innerHTML = progressHTML();
-
   const bycat = {};
   arr.forEach(item => { if (!bycat[item.cat]) bycat[item.cat]=[]; bycat[item.cat].push(item); });
-
-  // Render in store order, skip empty categories
   el.innerHTML = CATEGORIES
     .filter(c => bycat[c.name])
     .map(c => `<div class="cat-group">
       <div class="cat-label">${esc(c.name)}</div>
-      ${bycat[c.name].map(item =>
-        `<div class="item-card${item.checked?' checked':''}">
-          <button class="check-btn${item.checked?' done':''}" onclick="toggleCheck('${item.id}')"></button>
-          <span class="item-name">${esc(item.name)}</span>
-          <button class="del-btn" onclick="deleteItem('${item.id}')">×</button>
-        </div>`).join('')}
+      ${bycat[c.name].map(item => itemCardHTML(item, false)).join('')}
     </div>`).join('') + actionButtons();
 }
 
@@ -320,10 +438,8 @@ function renderRoute() {
   const arr = sortedItems();
   if (!arr.length) { prog.innerHTML=''; el.innerHTML='<div class="empty">Add items first to see your route</div>'; return; }
   prog.innerHTML = progressHTML();
-
   const bycat = {};
   arr.forEach(item => { if (!bycat[item.cat]) bycat[item.cat]=[]; bycat[item.cat].push(item); });
-
   let step = 1;
   el.innerHTML = CATEGORIES
     .filter(c => bycat[c.name])
@@ -350,6 +466,15 @@ window.deleteItem = deleteItem;
 window.toggleCheck = toggleCheck;
 window.clearChecked = clearChecked;
 window.switchTab = switchTab;
+window.openCatModal = openCatModal;
+window.assignCat = assignCat;
+window.closeCatModal = closeCatModal;
+window.onDragStart = onDragStart;
+window.onDragEnd = onDragEnd;
+window.onDragOver = onDragOver;
+window.onDrop = onDrop;
+window.onTouchStart = onTouchStart;
+window.onTouchEnd = onTouchEnd;
 </script>
 
 </body>
