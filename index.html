@@ -127,7 +127,6 @@
     <div id="view-route" class="view">
       <div class="route-header">
         <h2>Store route</h2>
-        <button class="btn-optimize" onclick="optimizeRoute()">Optimize</button>
       </div>
       <div id="route-progress"></div>
       <div id="route-container"></div>
@@ -153,98 +152,59 @@ const firebaseApp = initializeApp(firebaseConfig);
 const db = getDatabase(firebaseApp);
 const itemsRef = ref(db, 'items');
 
-const ZONES = [
-  { name: 'Entrance & bakery',   cats: ['bakery','bread'] },
-  { name: 'Fruits & vegetables', cats: ['fruits','vegetables'] },
-  { name: 'Deli & refrigerated', cats: ['deli','refrigerated','ready meals'] },
-  { name: 'Dairy & eggs',        cats: ['dairy','eggs'] },
-  { name: 'Meat & fish',         cats: ['meat','fish','seafood'] },
-  { name: 'Dry food & pantry',   cats: ['dry food','pasta','rice','canned','condiments','snacks','beverages','coffee','tea','spices','cereal'] },
-  { name: 'Frozen',              cats: ['frozen'] },
-  { name: 'Household & hygiene', cats: ['household','hygiene','cleaning','personal care'] },
+// Store categories in exact walk order. Each has a display name and keyword list.
+const CATEGORIES = [
+  { name: 'Hem',              words: ['lakan','synål','synål','dynvar','dynvar','blommor','blomma','kudde','kuddfodral','påslakan'] },
+  { name: 'Bygg',             words: ['handskar','tejp','lim','måla','färg','skruv','spik','borr','verktyg','byggmaterial'] },
+  { name: 'Trädgård',         words: ['mull','jord','frön','frö','kruka','plantor','planta','gödsel','trädgård'] },
+  { name: 'Teknik',           words: ['adapter','kabel','kablar','gas','batteri','sladd','laddare','hörlurar','usb','kontakt'] },
+  { name: 'Ost',              words: ['ost','riven ost','getost','brie','camembert','cheddar','mozzarella','parmesan','fetaost','feta','gouda','emmental'] },
+  { name: 'Frukter',          words: ['banan','bananer','päron','lök','potatis','äpple','apelsin','citron','lime','mango','vindruvor','jordgubbar','hallon','blåbär','kiwi','ananas','melon','plommon','persika','körsbär','tomat','tomater','avokado','gurka','paprika','broccoli','blomkål','morötter','morot','sallad','spenat','majs','ärtor','svamp','purjolök','selleri','rödlök','vitlök','ingefära','chili','rotsaker','rödbeta','palsternacka','kålrot'] },
+  { name: 'Snacks',           words: ['chips','nötter','popcorn','godis','kex','krackers','jordnötter','mandlar','cashewnötter','pistaschnötter','russin','torkad frukt','müslibar','proteinbar','riskaka','majssnacks'] },
+  { name: 'Mjölkprodukter',   words: ['mjölk','yoghurt','youghurt','keso','gräddfil','grädde','smör','kvarg','fil','filmjölk','havremjölk','oatly','ägg','crème fraîche','cream cheese','kesella','matyoghurt','turkisk yoghurt','turkisk youghurt'] },
+  { name: 'Kött',             words: ['malet','malet kött','maltkött','maletkött','kyckling','kycklingfilé','kycklingflarn','fläsk','nöt','lamm','korv','bacon','skinka','köttfärs','biff','entrecote','fläskfile','lövbiff','köttbullar','köttbulle','fågelfilé','fisk','lax','torsk','räkor','sill','tonfisk','laxfile','fiskpinnar'] },
+  { name: 'Pasta',            words: ['pasta','penne','makaroner','makaroni','spagetti','spaghetti','tagliatelle','fusilli','rigatoni','lasagne','nudlar','vermicelli','orzo'] },
+  { name: 'Taco',             words: ['tortilla','salsa','tacokrydda','taco','nacho','nachos','guacamole','tacoskal','burrito','enchilada','jalapeño','tacosåstortilla'] },
+  { name: 'Torrmat & Såser',  words: ['kryddor','gröt','majs','ris','quinoa','couscous','bulgur','linser','bönor','kikärtor','konserver','ketchup','senap','majonnäs','soja','sojasås','olja','olivolja','vinäger','honung','syrup','mjöl','socker','salt','buljong','fond','gräddsås','tomatsås','tomatpuré','curry','paprika krydda','timjan','oregano','basilika','kanel','ingefära','mjöl','havregryn','cornflakes','müsli','flingor'] },
+  { name: 'Bröd',             words: ['bröd','knäckebröd','kläckebröd','käckebröd','bulla','bullor','croissant','toast','levain','surdeg','bagel','pitabröd','tunnbröd','rågbröd','franskbröd','formfranska','wienerbröd'] },
+  { name: 'Sylt & Kaffe',     words: ['sylt','peanutbutter','jordnötssmör','kaffe','te','kakao','varm choklad','nutella','marmelad','honungsmelon','honung','kaffefilter','nespresso','kaffekapslar'] },
+  { name: 'Hundmat',          words: ['hundkorv','hundben','hundgodis','hundfoder','hundmat','kattmat','kattsand','kattgodis','hundbricka','katthalsband'] },
+  { name: 'Godis',            words: ['lösgodis','choklad','skumgodis','lakrits','karamell','gelégodis','gummibjörnar','polly','ahlgrens','fazer','marabou','daim','kit kat','twix','snickers','bounty','ferrero'] },
+  { name: 'Hygien',           words: ['deodorant','schampo','torrschampo','balsam','tvål','duschgel','tandkräm','tandborste','raklödder','rakkniv','rakblad','bomull','kondomer','menskopp','tamponger','dambinda','lotion','kräm','ansiktskräm','solkräm','parfym','hårvax','hårgel','nässpray','ögondroppar'] },
+  { name: 'Tvätt',            words: ['diskmedel','tvättmedel','sköljmedel','diskmaskin','diskmaskinspulver','diskmaskinssalt','torkmedel','tvättlapp','svamp','städ','allrengöring','fönsterputsmedel','toalettpapper','hushållspapper','pappersservetter','sopsäckar','plastpåsar','aluminiumfolie','plastfolie','bakplåtspapper'] },
+  { name: 'Kyldisk',          words: ['pizza','glass','franskisar','sopprötter','fryst','fryspizza','färdigmat','salladsbar','smörgås','wraps','sushi','hummus','tzatziki','taramasalata','dipp','röra','paté','leverpastej','färskost'] },
+  { name: 'Övrigt',           words: [] },
 ];
-
-const CAT_RULES = [
-  { cat: 'fruits', color: 'green', words: [
-    'banana','bananer','banaani','apple','äpple','omena','orange','apelsin','appelsiini','grape','druva','viinit','berry','bär','marja','berries','strawberry','jordgubbe','mansikka','mango','pear','päron','päärynä','melon','kiwi','lemon','citron','sitruuna','lime','peach','persika','persikka','plum','plommon','luumu','pineapple','ananas','fruit','frukt','hedelmä','avocado','avokado','tomato','tomat','tomaatti','tomatoes','blåbär','mustikka','hallon','vadelma','körsbär','kirsikka'
-  ]},
-  { cat: 'vegetables', color: 'green', words: [
-    'carrot','morot','porkkana','potato','potatis','peruna','onion','lök','sipuli','garlic','vitlök','valkosipuli','broccoli','parsakaali','spinach','spenat','pinaatti','lettuce','sallad','salaatti','cucumber','gurka','kurkku','pepper','paprika','zucchini','squash','cabbage','kål','kaali','celery','selleri','selleri','mushroom','svamp','sieni','mushrooms','pea','ärta','herne','peas','corn','majs','maissi','salad','vegetable','grönsak','vihannes','leek','purjolök','purjosipuli','beetroot','rödbeta','punajuuri','morot','tomat','tomaatti','blomkål','kukkakaali','rättika','retiisi'
-  ]},
-  { cat: 'dairy', color: 'blue', words: [
-    'milk','mjölk','maito','cream','grädde','kerma','yogurt','yoghurt','jogurtti','butter','smör','voi','cheese','ost','juusto','quark','kvarg','rahka','sour cream','gräddfil','hapankerma','oat milk','havremjölk','kaurajuoma','almond milk','mandelmjölk','kefir','filmjölk','piimä','crème fraîche','bregott'
-  ]},
-  { cat: 'eggs', color: 'amber', words: [
-    'egg','eggs','ägg','kananmuna','muna'
-  ]},
-  { cat: 'meat', color: 'red', words: [
-    'chicken','kyckling','kana','beef','nötkött','nauta','pork','fläsk','possu','lamb','lamm','karitsa','turkey','kalkon','kalkkuna','sausage','korv','makkara','bacon','ham','skinka','kinkku','minced','mince','nötfärs','jauheliha','steak','biff','pihvi','fillet','filé','filee','meat','kött','liha','salami','chorizo','hotdog','falukorv','nakki','bratwurst'
-  ]},
-  { cat: 'fish', color: 'teal', words: [
-    'salmon','lax','lohi','tuna','tonfisk','tonnikala','cod','torsk','turska','shrimp','räkor','katkarapu','prawn','herring','sill','silli','silakka','mackerel','makrill','makrilli','fish','fisk','kala','seafood','skaldjur','äyriäinen','crab','krabba','rapu','mussel','mussla','simpukka','anchovy','ansjovis','anjovispasta'
-  ]},
-  { cat: 'frozen', color: 'blue', words: [
-    'frozen','fryst','pakaste','ice cream','glass','jäätelö','icecream','frys','pakastettu'
-  ]},
-  { cat: 'bakery', color: 'amber', words: [
-    'bread','bröd','leipä','loaf','bun','bulle','pulla','roll','croissant','muffin','cake','kaka','kakku','pastry','bagel','pita','tortilla','wrap','cracker','knäckebröd','näkkileipä','franskbröd','ruisleipä','suuruslimppu'
-  ]},
-  { cat: 'pasta', color: 'purple', words: [
-    'pasta','spaghetti','penne','macaroni','makaroni','noodle','nudlar','nuudeli','lasagne','lasagna','fettuccine','rigatoni'
-  ]},
-  { cat: 'rice', color: 'purple', words: [
-    'rice','ris','riisi','quinoa','couscous','bulgur','oats','havre','kaura','oatmeal','porridge','gröt','puuro','millet','hirs'
-  ]},
-  { cat: 'canned', color: 'purple', words: [
-    'canned','konserv','säilyke','tinned','beans','bönor','pavut','lentils','linser','linssit','chickpeas','kikärtor','kikherneet','soup','soppa','keitto','tomato paste','tomatpuré','tomaattipyree','coconut milk','kokosmjölk','kookosmaito'
-  ]},
-  { cat: 'condiments', color: 'amber', words: [
-    'ketchup','mustard','senap','sinappi','mayo','majonnäs','majoneesi','mayonnaise','vinegar','vinäger','etikka','soy sauce','soja','soijakastike','oil','olja','öljy','olive oil','olivolja','oliiviöljy','salt','salz','suola','sugar','socker','sokeri','honey','honung','hunaja','jam','sylt','hillo','sauce','sås','kastike','dressing','syrup','sirap','siirappi','tahini','hummus'
-  ]},
-  { cat: 'snacks', color: 'amber', words: [
-    'chips','crisps','chocolate','choklad','suklaa','candy','godis','karkki','sweets','nuts','nötter','pähkinät','peanut','jordnöt','maapähkinä','almond','mandel','manteli','cashew','popcorn','biscuit','kex','keksi','cookie','snack','granola','bar','raisin','russin','rusinat','choklad'
-  ]},
-  { cat: 'beverages', color: 'teal', words: [
-    'juice','juho','mehu','soda','läsk','limonadi','water','vatten','vesi','beer','öl','olut','wine','vin','viini','cider','drink','lemonade','sparkling','cola','kombucha','energidryck','energiajuoma'
-  ]},
-  { cat: 'coffee', color: 'amber', words: [
-    'coffee','kaffe','kahvi','espresso','tea','te','tee','herbal tea','örtte','yrttitee','matcha','cocoa','kakao','kaakao','hot chocolate'
-  ]},
-  { cat: 'spices', color: 'red', words: [
-    'spice','krydda','mauste','herb','ört','yrtti','cinnamon','kanel','kaneli','cumin','spiskummin','juustokumina','paprika','turmeric','gurkmeja','kurkuma','oregano','basil','basilika','thyme','timjan','timjami','rosemary','rosmarin','dill','curry','chili','ginger','ingefära','inkivääri','vanilla','vanilj','vanilja','nutmeg','muskot','muskotti','flour','mjöl','jauho','yeast','jäst','hiiva','baking','bakpulver','leivinjauhe'
-  ]},
-  { cat: 'household', color: 'purple', words: [
-    'toilet','toalett','vessa','vessapapper','toalettpapper','wc','paper towel','hushållspapper','talouspaperi','kitchen roll','trash bag','sopsäck','roskapussi','foil','aluminiumfolie','folie','cling film','plastfolie','kelmukalvo','sponge','svamp','sieni','detergent','diskmedel','pesuaine','dishwasher','diskmaskin','astianpesukone','laundry','tvätt','pyykki','washing','paper','papper','paperi','gloves','handskar','hanskat','handske'
-  ]},
-  { cat: 'hygiene', color: 'teal', words: [
-    'shampoo','conditioner','balsam','hoitoaine','soap','tvål','saippua','deodorant','toothpaste','tandkräm','hammastahna','toothbrush','tandborste','hammasharja','razor','rakhyvel','partahöylä','lotion','body wash','duschgel','suihkugeeli','cotton','bomull','pumpuli','hygien','hygienia'
-  ]},
-  { cat: 'dry food', color: 'purple', words: [] },
-];
-
-const BADGE_COLORS = {
-  green:  { bg:'#eaf3de', text:'#3b6d11' },
-  blue:   { bg:'#e6f1fb', text:'#185fa5' },
-  red:    { bg:'#fcebeb', text:'#a32d2d' },
-  amber:  { bg:'#faeeda', text:'#854f0b' },
-  purple: { bg:'#eeedfe', text:'#534ab7' },
-  teal:   { bg:'#e1f5ee', text:'#0f6e56' },
-};
 
 function categorize(name) {
-  const n = name.toLowerCase();
-  for (const rule of CAT_RULES) {
-    if (rule.words.some(w => n.includes(w))) return rule;
+  const n = name.toLowerCase().trim();
+  for (const cat of CATEGORIES) {
+    if (cat.words.some(w => n.includes(w.toLowerCase()) || w.toLowerCase().includes(n))) {
+      return cat.name;
+    }
   }
-  return CAT_RULES[CAT_RULES.length - 1];
+  return 'Övrigt';
 }
 
-function getZoneIndex(cat) {
-  const c = (cat||'').toLowerCase();
-  for (let i = 0; i < ZONES.length; i++) {
-    if (ZONES[i].cats.some(z => c===z || c.includes(z) || z.includes(c))) return i;
-  }
-  return ZONES.length - 2;
+function getCatIndex(catName) {
+  const i = CATEGORIES.findIndex(c => c.name === catName);
+  return i === -1 ? CATEGORIES.length - 1 : i;
+}
+
+const BADGE_COLORS = [
+  '#e6f1fb','#eaf3de','#faeeda','#fcebeb','#eeedfe','#e1f5ee','#faeeda','#e6f1fb',
+  '#eaf3de','#fcebeb','#faeeda','#eeedfe','#e1f5ee','#faeeda','#fcebeb','#eaf3de',
+  '#eeedfe','#e1f5ee','#faeeda','#f5f5f3'
+];
+const BADGE_TEXT = [
+  '#185fa5','#3b6d11','#854f0b','#a32d2d','#534ab7','#0f6e56','#854f0b','#185fa5',
+  '#3b6d11','#a32d2d','#854f0b','#534ab7','#0f6e56','#854f0b','#a32d2d','#3b6d11',
+  '#534ab7','#0f6e56','#854f0b','#666660'
+];
+
+function badgeStyle(catName) {
+  const i = getCatIndex(catName);
+  return `background:${BADGE_COLORS[i % BADGE_COLORS.length]};color:${BADGE_TEXT[i % BADGE_TEXT.length]}`;
 }
 
 let items = {};
@@ -267,10 +227,10 @@ async function addItem() {
   const name = input.value.trim();
   if (!name) return;
   input.value = '';
-  const rule = categorize(name);
+  const cat = categorize(name);
   const id = 'item_' + Date.now();
   syncDot.className = 'sync-dot syncing';
-  await set(ref(db, 'items/' + id), { id, name, cat: rule.cat, color: rule.color, checked: false, order: Date.now() });
+  await set(ref(db, 'items/' + id), { id, name, cat, checked: false, order: getCatIndex(cat) * 1000 + Date.now() % 1000 });
   input.focus();
 }
 
@@ -295,31 +255,22 @@ async function clearChecked() {
   }
 }
 
-async function optimizeRoute() {
-  const sorted = Object.values(items).sort((a,b) => getZoneIndex(a.cat) - getZoneIndex(b.cat));
-  syncDot.className = 'sync-dot syncing';
-  for (let i = 0; i < sorted.length; i++) {
-    await update(ref(db, 'items/' + sorted[i].id), { order: i });
-  }
-}
-
 function sortedItems() {
-  return Object.values(items).sort((a,b) => (a.order||0) - (b.order||0));
+  return Object.values(items).sort((a, b) => getCatIndex(a.cat) - getCatIndex(b.cat));
 }
 
 function progressHTML() {
   const all = Object.values(items);
-  const total = all.length, done = all.filter(i=>i.checked).length;
-  const pct = total ? Math.round(done/total*100) : 0;
+  const total = all.length, done = all.filter(i => i.checked).length;
+  const pct = total ? Math.round(done / total * 100) : 0;
   return `<div class="progress-wrap">
     <div class="progress-info"><span>${done} of ${total} items</span><span>${pct}%</span></div>
     <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
   </div>`;
 }
 
-function badgeStyle(color) {
-  const c = BADGE_COLORS[color]||BADGE_COLORS.purple;
-  return `background:${c.bg};color:${c.text}`;
+function actionButtons() {
+  return `<button class="clear-btn" onclick="clearChecked()">Clear checked items</button>`;
 }
 
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -328,13 +279,13 @@ function renderAll() { renderAdd(); renderList(); renderRoute(); }
 
 function renderAdd() {
   const el = document.getElementById('add-list');
-  const arr = sortedItems().reverse();
-  if (!arr.length) { el.innerHTML='<div class="empty">No items yet — add your first one above</div>'; return; }
+  const arr = Object.values(items).reverse();
+  if (!arr.length) { el.innerHTML = '<div class="empty">No items yet — add your first one above</div>'; return; }
   el.innerHTML = arr.map(item =>
     `<div class="item-card${item.checked?' checked':''}">
       <button class="check-btn${item.checked?' done':''}" onclick="toggleCheck('${item.id}')"></button>
       <span class="item-name">${esc(item.name)}</span>
-      <span class="badge" style="${badgeStyle(item.color)}">${esc(item.cat)}</span>
+      <span class="badge" style="${badgeStyle(item.cat)}">${esc(item.cat)}</span>
       <button class="del-btn" onclick="deleteItem('${item.id}')">×</button>
     </div>`).join('') + actionButtons();
 }
@@ -345,12 +296,16 @@ function renderList() {
   const arr = sortedItems();
   if (!arr.length) { prog.innerHTML=''; el.innerHTML='<div class="empty">Add items in the Add tab</div>'; return; }
   prog.innerHTML = progressHTML();
+
   const bycat = {};
-  arr.forEach(item => { if(!bycat[item.cat]) bycat[item.cat]=[]; bycat[item.cat].push(item); });
-  el.innerHTML = Object.entries(bycat).map(([cat,catItems]) =>
-    `<div class="cat-group">
-      <div class="cat-label">${esc(cat)}</div>
-      ${catItems.map(item =>
+  arr.forEach(item => { if (!bycat[item.cat]) bycat[item.cat]=[]; bycat[item.cat].push(item); });
+
+  // Render in store order, skip empty categories
+  el.innerHTML = CATEGORIES
+    .filter(c => bycat[c.name])
+    .map(c => `<div class="cat-group">
+      <div class="cat-label">${esc(c.name)}</div>
+      ${bycat[c.name].map(item =>
         `<div class="item-card${item.checked?' checked':''}">
           <button class="check-btn${item.checked?' done':''}" onclick="toggleCheck('${item.id}')"></button>
           <span class="item-name">${esc(item.name)}</span>
@@ -363,30 +318,24 @@ function renderRoute() {
   const prog = document.getElementById('route-progress');
   const el = document.getElementById('route-container');
   const arr = sortedItems();
-  if (!arr.length) { prog.innerHTML=''; el.innerHTML='<div class="empty">Add items first, then tap Optimize</div>'; return; }
+  if (!arr.length) { prog.innerHTML=''; el.innerHTML='<div class="empty">Add items first to see your route</div>'; return; }
   prog.innerHTML = progressHTML();
-  const byZone = {};
-  arr.forEach(item => {
-    const zi = getZoneIndex(item.cat);
-    const zname = ZONES[zi] ? ZONES[zi].name : 'Other';
-    if (!byZone[zname]) byZone[zname]=[];
-    byZone[zname].push(item);
-  });
+
+  const bycat = {};
+  arr.forEach(item => { if (!bycat[item.cat]) bycat[item.cat]=[]; bycat[item.cat].push(item); });
+
   let step = 1;
-  el.innerHTML = ZONES.filter(z => byZone[z.name]).map(z =>
-    `<div class="route-step">
+  el.innerHTML = CATEGORIES
+    .filter(c => bycat[c.name])
+    .map(c => `<div class="route-step">
       <div class="step-num">${step++}</div>
       <div style="flex:1">
-        <div class="step-zone">${esc(z.name)}</div>
-        <div class="step-items">${byZone[z.name].map(i =>
+        <div class="step-zone">${esc(c.name)}</div>
+        <div class="step-items">${bycat[c.name].map(i =>
           `<span class="step-item${i.checked?' done':''}" onclick="toggleCheck('${i.id}')">${esc(i.name)}</span>`
         ).join('')}</div>
       </div>
     </div>`).join('') + actionButtons();
-}
-
-function actionButtons() {
-  return `<button class="clear-btn" onclick="clearChecked()">Clear checked items</button>`;
 }
 
 function switchTab(tab, btn) {
@@ -400,8 +349,8 @@ window.addItem = addItem;
 window.deleteItem = deleteItem;
 window.toggleCheck = toggleCheck;
 window.clearChecked = clearChecked;
-window.optimizeRoute = optimizeRoute;
 window.switchTab = switchTab;
 </script>
+
 </body>
 </html>
