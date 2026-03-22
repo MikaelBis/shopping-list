@@ -164,25 +164,61 @@ const ZONES = [
 ];
 
 const CAT_RULES = [
-  { cat: 'fruits',     color: 'green',  words: ['banana','apple','orange','grape','berry','berries','strawberry','mango','pear','melon','kiwi','lemon','lime','peach','plum','pineapple','fruit','avocado','tomato','tomatoes'] },
-  { cat: 'vegetables', color: 'green',  words: ['carrot','potato','onion','garlic','broccoli','spinach','lettuce','cucumber','pepper','zucchini','cabbage','celery','mushroom','mushrooms','pea','peas','corn','salad','vegetable','leek','beetroot'] },
-  { cat: 'dairy',      color: 'blue',   words: ['milk','cream','yogurt','yoghurt','butter','cheese','quark','sour cream','creme fraiche','oat milk','almond milk','kefir'] },
-  { cat: 'eggs',       color: 'amber',  words: ['egg','eggs'] },
-  { cat: 'meat',       color: 'red',    words: ['chicken','beef','pork','lamb','turkey','sausage','bacon','ham','minced','mince','steak','chop','fillet','meat','salami','chorizo','hotdog'] },
-  { cat: 'fish',       color: 'teal',   words: ['salmon','tuna','cod','shrimp','prawn','herring','mackerel','fish','seafood','crab','lobster','mussel','anchovy'] },
-  { cat: 'frozen',     color: 'blue',   words: ['frozen','ice cream','icecream'] },
-  { cat: 'bakery',     color: 'amber',  words: ['bread','loaf','bun','roll','croissant','muffin','cake','pastry','bagel','pita','tortilla','wrap','cracker'] },
-  { cat: 'pasta',      color: 'purple', words: ['pasta','spaghetti','penne','macaroni','noodle','lasagne','lasagna','fettuccine','rigatoni'] },
-  { cat: 'rice',       color: 'purple', words: ['rice','quinoa','couscous','bulgur','oats','oatmeal','porridge','millet'] },
-  { cat: 'canned',     color: 'purple', words: ['canned','tinned','beans','lentils','chickpeas','soup','tomato paste','coconut milk'] },
-  { cat: 'condiments', color: 'amber',  words: ['ketchup','mustard','mayo','mayonnaise','vinegar','soy sauce','oil','olive oil','salt','pepper','sugar','honey','jam','sauce','dressing','syrup','tahini','hummus'] },
-  { cat: 'snacks',     color: 'amber',  words: ['chips','crisps','chocolate','candy','sweets','nuts','peanut','almond','cashew','popcorn','biscuit','cookie','snack','granola','bar','raisin'] },
-  { cat: 'beverages',  color: 'teal',   words: ['juice','soda','water','beer','wine','cider','drink','lemonade','sparkling','cola','kombucha'] },
-  { cat: 'coffee',     color: 'amber',  words: ['coffee','espresso','tea','herbal tea','matcha','cocoa','hot chocolate'] },
-  { cat: 'spices',     color: 'red',    words: ['spice','herb','cinnamon','cumin','paprika','turmeric','oregano','basil','thyme','rosemary','dill','curry','chili','ginger','vanilla','nutmeg','flour','yeast','baking'] },
-  { cat: 'household',  color: 'purple', words: ['toilet','paper towel','kitchen roll','trash bag','foil','cling film','sponge','detergent','dishwasher','laundry','washing'] },
-  { cat: 'hygiene',    color: 'teal',   words: ['shampoo','conditioner','soap','deodorant','toothpaste','toothbrush','razor','lotion','body wash','cotton'] },
-  { cat: 'dry food',   color: 'purple', words: [] },
+  { cat: 'fruits', color: 'green', words: [
+    'banana','bananer','banaani','apple','äpple','omena','orange','apelsin','appelsiini','grape','druva','viinit','berry','bär','marja','berries','strawberry','jordgubbe','mansikka','mango','pear','päron','päärynä','melon','kiwi','lemon','citron','sitruuna','lime','peach','persika','persikka','plum','plommon','luumu','pineapple','ananas','fruit','frukt','hedelmä','avocado','avokado','tomato','tomat','tomaatti','tomatoes','blåbär','mustikka','hallon','vadelma','körsbär','kirsikka'
+  ]},
+  { cat: 'vegetables', color: 'green', words: [
+    'carrot','morot','porkkana','potato','potatis','peruna','onion','lök','sipuli','garlic','vitlök','valkosipuli','broccoli','parsakaali','spinach','spenat','pinaatti','lettuce','sallad','salaatti','cucumber','gurka','kurkku','pepper','paprika','zucchini','squash','cabbage','kål','kaali','celery','selleri','selleri','mushroom','svamp','sieni','mushrooms','pea','ärta','herne','peas','corn','majs','maissi','salad','vegetable','grönsak','vihannes','leek','purjolök','purjosipuli','beetroot','rödbeta','punajuuri','morot','tomat','tomaatti','blomkål','kukkakaali','rättika','retiisi'
+  ]},
+  { cat: 'dairy', color: 'blue', words: [
+    'milk','mjölk','maito','cream','grädde','kerma','yogurt','yoghurt','jogurtti','butter','smör','voi','cheese','ost','juusto','quark','kvarg','rahka','sour cream','gräddfil','hapankerma','oat milk','havremjölk','kaurajuoma','almond milk','mandelmjölk','kefir','filmjölk','piimä','crème fraîche','bregott'
+  ]},
+  { cat: 'eggs', color: 'amber', words: [
+    'egg','eggs','ägg','kananmuna','muna'
+  ]},
+  { cat: 'meat', color: 'red', words: [
+    'chicken','kyckling','kana','beef','nötkött','nauta','pork','fläsk','possu','lamb','lamm','karitsa','turkey','kalkon','kalkkuna','sausage','korv','makkara','bacon','ham','skinka','kinkku','minced','mince','nötfärs','jauheliha','steak','biff','pihvi','fillet','filé','filee','meat','kött','liha','salami','chorizo','hotdog','falukorv','nakki','bratwurst'
+  ]},
+  { cat: 'fish', color: 'teal', words: [
+    'salmon','lax','lohi','tuna','tonfisk','tonnikala','cod','torsk','turska','shrimp','räkor','katkarapu','prawn','herring','sill','silli','silakka','mackerel','makrill','makrilli','fish','fisk','kala','seafood','skaldjur','äyriäinen','crab','krabba','rapu','mussel','mussla','simpukka','anchovy','ansjovis','anjovispasta'
+  ]},
+  { cat: 'frozen', color: 'blue', words: [
+    'frozen','fryst','pakaste','ice cream','glass','jäätelö','icecream','frys','pakastettu'
+  ]},
+  { cat: 'bakery', color: 'amber', words: [
+    'bread','bröd','leipä','loaf','bun','bulle','pulla','roll','croissant','muffin','cake','kaka','kakku','pastry','bagel','pita','tortilla','wrap','cracker','knäckebröd','näkkileipä','franskbröd','ruisleipä','suuruslimppu'
+  ]},
+  { cat: 'pasta', color: 'purple', words: [
+    'pasta','spaghetti','penne','macaroni','makaroni','noodle','nudlar','nuudeli','lasagne','lasagna','fettuccine','rigatoni'
+  ]},
+  { cat: 'rice', color: 'purple', words: [
+    'rice','ris','riisi','quinoa','couscous','bulgur','oats','havre','kaura','oatmeal','porridge','gröt','puuro','millet','hirs'
+  ]},
+  { cat: 'canned', color: 'purple', words: [
+    'canned','konserv','säilyke','tinned','beans','bönor','pavut','lentils','linser','linssit','chickpeas','kikärtor','kikherneet','soup','soppa','keitto','tomato paste','tomatpuré','tomaattipyree','coconut milk','kokosmjölk','kookosmaito'
+  ]},
+  { cat: 'condiments', color: 'amber', words: [
+    'ketchup','mustard','senap','sinappi','mayo','majonnäs','majoneesi','mayonnaise','vinegar','vinäger','etikka','soy sauce','soja','soijakastike','oil','olja','öljy','olive oil','olivolja','oliiviöljy','salt','salz','suola','sugar','socker','sokeri','honey','honung','hunaja','jam','sylt','hillo','sauce','sås','kastike','dressing','syrup','sirap','siirappi','tahini','hummus'
+  ]},
+  { cat: 'snacks', color: 'amber', words: [
+    'chips','crisps','chocolate','choklad','suklaa','candy','godis','karkki','sweets','nuts','nötter','pähkinät','peanut','jordnöt','maapähkinä','almond','mandel','manteli','cashew','popcorn','biscuit','kex','keksi','cookie','snack','granola','bar','raisin','russin','rusinat','choklad'
+  ]},
+  { cat: 'beverages', color: 'teal', words: [
+    'juice','juho','mehu','soda','läsk','limonadi','water','vatten','vesi','beer','öl','olut','wine','vin','viini','cider','drink','lemonade','sparkling','cola','kombucha','energidryck','energiajuoma'
+  ]},
+  { cat: 'coffee', color: 'amber', words: [
+    'coffee','kaffe','kahvi','espresso','tea','te','tee','herbal tea','örtte','yrttitee','matcha','cocoa','kakao','kaakao','hot chocolate'
+  ]},
+  { cat: 'spices', color: 'red', words: [
+    'spice','krydda','mauste','herb','ört','yrtti','cinnamon','kanel','kaneli','cumin','spiskummin','juustokumina','paprika','turmeric','gurkmeja','kurkuma','oregano','basil','basilika','thyme','timjan','timjami','rosemary','rosmarin','dill','curry','chili','ginger','ingefära','inkivääri','vanilla','vanilj','vanilja','nutmeg','muskot','muskotti','flour','mjöl','jauho','yeast','jäst','hiiva','baking','bakpulver','leivinjauhe'
+  ]},
+  { cat: 'household', color: 'purple', words: [
+    'toilet','toalett','vessa','vessapapper','toalettpapper','wc','paper towel','hushållspapper','talouspaperi','kitchen roll','trash bag','sopsäck','roskapussi','foil','aluminiumfolie','folie','cling film','plastfolie','kelmukalvo','sponge','svamp','sieni','detergent','diskmedel','pesuaine','dishwasher','diskmaskin','astianpesukone','laundry','tvätt','pyykki','washing','paper','papper','paperi','gloves','handskar','hanskat','handske'
+  ]},
+  { cat: 'hygiene', color: 'teal', words: [
+    'shampoo','conditioner','balsam','hoitoaine','soap','tvål','saippua','deodorant','toothpaste','tandkräm','hammastahna','toothbrush','tandborste','hammasharja','razor','rakhyvel','partahöylä','lotion','body wash','duschgel','suihkugeeli','cotton','bomull','pumpuli','hygien','hygienia'
+  ]},
+  { cat: 'dry food', color: 'purple', words: [] },
 ];
 
 const BADGE_COLORS = {
