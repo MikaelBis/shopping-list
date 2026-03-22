@@ -87,8 +87,10 @@
   .cat-option { display: flex; align-items: center; justify-content: space-between; padding: 12px 4px; border-bottom: 0.5px solid var(--border); cursor: pointer; font-size: 15px; }
   .cat-option:last-child { border-bottom: none; }
   .cat-option:active { background: var(--bg2); }
-  .cat-option.selected { font-weight: 600; }
-  .cat-option .cat-tick { color: var(--green-text); font-size: 18px; }
+  .modal-cat-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 12px 4px; border: none; border-bottom: 0.5px solid var(--border); background: transparent; color: var(--text); font-size: 15px; cursor: pointer; text-align: left; }
+  .modal-cat-btn:last-child { border-bottom: none; }
+  .modal-cat-btn:active { background: var(--bg2); }
+  .modal-cat-btn.current { font-weight: 600; }
   /* Loading */
   .loading-screen { position: fixed; inset: 0; background: var(--bg3); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; z-index: 100; }
   .loading-screen p { font-size: 15px; color: var(--text2); }
@@ -104,10 +106,10 @@
 </div>
 
 <!-- Category picker modal -->
-<div class="modal-overlay" id="cat-modal" onclick="closeModal(event)">
+<div class="modal-overlay" id="cat-modal" onclick="closeCatModal(event)">
   <div class="modal">
-    <div class="modal-title">Change category</div>
-    <div id="cat-options"></div>
+    <div class="modal-title">Change category for: <span id="modal-item-name" style="font-weight:600;color:var(--text)"></span></div>
+    <div id="modal-cat-list"></div>
   </div>
 </div>
 
