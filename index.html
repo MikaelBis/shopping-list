@@ -211,7 +211,6 @@ function getZoneIndex(cat) {
 }
 
 let items = {};
-let optimized = false;
 let initialized = false;
 const syncDot = document.getElementById('sync-dot');
 
@@ -265,7 +264,6 @@ async function optimizeRoute() {
   for (let i = 0; i < sorted.length; i++) {
     await update(ref(db, 'items/' + sorted[i].id), { order: i });
   }
-  optimized = true;
 }
 
 function sortedItems() {
@@ -330,7 +328,6 @@ function renderRoute() {
   const arr = sortedItems();
   if (!arr.length) { prog.innerHTML=''; el.innerHTML='<div class="empty">Add items first, then tap Optimize</div>'; return; }
   prog.innerHTML = progressHTML();
-  if (!optimized) { el.innerHTML='<div class="empty" style="padding:1.5rem 0">Tap "Optimize" to sort items by store zone</div>'; return; }
   const byZone = {};
   arr.forEach(item => {
     const zi = getZoneIndex(item.cat);
