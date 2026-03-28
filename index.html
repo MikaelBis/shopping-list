@@ -7,140 +7,141 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #ffffff; --bg2: #f5f5f3; --bg3: #eeede9;
-    --text: #1a1a1a; --text2: #666660; --text3: #999990;
-    --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.22);
-    --green-bg: #eaf3de; --green-text: #3b6d11;
-    --blue-bg: #e6f1fb; --blue-text: #185fa5;
-    --red-bg: #fcebeb; --red-text: #a32d2d;
-    --radius: 10px; --radius-sm: 7px;
+    --bg:#ffffff;--bg2:#f5f5f3;--bg3:#eeede9;
+    --text:#1a1a1a;--text2:#666660;--text3:#999990;
+    --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);
+    --green-bg:#eaf3de;--green-text:#3b6d11;
+    --blue-bg:#e6f1fb;--blue-text:#185fa5;
+    --red-bg:#fcebeb;--red-text:#a32d2d;
+    --radius:10px;--radius-sm:7px;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #1c1c1a; --bg2: #252523; --bg3: #2e2e2b;
-      --text: #f0f0ec; --text2: #a0a09a; --text3: #66665f;
-      --border: rgba(255,255,255,0.10); --border2: rgba(255,255,255,0.20);
-      --green-bg: #173404; --green-text: #c0dd97;
-      --blue-bg: #042c53; --blue-text: #b5d4f4;
-      --red-bg: #501313; --red-text: #f7c1c1;
-    }
-  }
-  html, body { height: 100%; background: var(--bg3); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); }
-  .app { max-width: 480px; margin: 0 auto; min-height: 100%; background: var(--bg3); display: flex; flex-direction: column; }
-  .header { background: var(--bg); border-bottom: 0.5px solid var(--border); padding: 1rem 1rem 0; }
-  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
-  .header h1 { font-size: 20px; font-weight: 600; }
-  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; }
-  .sync-dot.online { background: #3b6d11; }
-  .sync-dot.syncing { background: #854f0b; }
-  .header p { font-size: 13px; color: var(--text2); margin-bottom: 0.75rem; }
-  .tabs { display: flex; }
-  .tab { flex: 1; padding: 10px 4px; font-size: 14px; text-align: center; border: none; background: transparent; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; }
-  .tab.active { color: var(--text); font-weight: 600; border-bottom: 2px solid var(--text); }
-  .content { flex: 1; padding: 1rem; }
-  .view { display: none; }
-  .view.active { display: block; }
-  .add-row { display: flex; gap: 8px; margin-bottom: 1rem; }
-  .add-row input { flex: 1; padding: 11px 14px; font-size: 16px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text); outline: none; }
-  .add-row input:focus { border-color: var(--text); }
-  .add-row input::placeholder { color: var(--text3); }
-  .btn-primary { padding: 11px 18px; font-size: 15px; font-weight: 600; border: none; border-radius: var(--radius); background: var(--text); color: var(--bg); cursor: pointer; white-space: nowrap; }
-  .btn-primary:active { opacity: 0.8; }
-  .empty { text-align: center; padding: 3rem 1rem; color: var(--text2); font-size: 15px; line-height: 1.6; }
-  .item-card { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); margin-bottom: 7px; transition: opacity 0.2s; cursor: grab; user-select: none; }
-  .item-card.dragging { opacity: 0.4; cursor: grabbing; }
-  .item-card.drag-over { border-color: var(--blue-text); background: var(--blue-bg); }
-  .item-card.checked { opacity: 0.4; }
-  .item-card.checked .item-name { text-decoration: line-through; }
-  .drag-handle { color: var(--text3); font-size: 16px; cursor: grab; flex-shrink: 0; padding: 0 2px; }
-  .check-btn { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--border2); background: transparent; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-  .check-btn.done { background: var(--green-bg); border-color: var(--green-text); }
-  .check-btn.done::after { content: ''; display: block; width: 6px; height: 10px; border: 2px solid var(--green-text); border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); }
-  .item-name { flex: 1; font-size: 15px; }
-  .badge { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 99px; flex-shrink: 0; white-space: nowrap; cursor: pointer; }
-  .badge:hover { filter: brightness(0.92); }
-  .del-btn { width: 28px; height: 28px; border: none; background: transparent; color: var(--text3); cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; border-radius: 6px; line-height: 1; }
-  .del-btn:active { background: var(--red-bg); color: var(--red-text); }
-  .cat-group { margin-bottom: 1.25rem; }
-  .cat-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text2); margin-bottom: 6px; }
-  .progress-wrap { margin-bottom: 1rem; }
-  .progress-info { display: flex; justify-content: space-between; font-size: 13px; color: var(--text2); margin-bottom: 6px; }
-  .progress-track { height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--green-text); border-radius: 3px; transition: width 0.3s; }
-  .route-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-  .route-header h2 { font-size: 17px; font-weight: 600; }
-  .route-step { display: flex; gap: 14px; padding: 12px 0; border-bottom: 0.5px solid var(--border); }
-  .route-step:last-child { border-bottom: none; }
-  .step-num { width: 26px; height: 26px; border-radius: 50%; background: var(--bg2); border: 0.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text2); flex-shrink: 0; margin-top: 1px; }
-  .step-zone { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-  .step-items { display: flex; flex-wrap: wrap; gap: 6px; }
-  .step-item { font-size: 13px; padding: 3px 10px; border-radius: 99px; background: var(--bg2); color: var(--text); border: 0.5px solid var(--border); cursor: pointer; white-space: nowrap; }
-  .step-item.done { text-decoration: line-through; opacity: 0.4; }
-  .clear-btn { width: 100%; margin-top: 1rem; padding: 12px; font-size: 14px; color: var(--text2); border: 0.5px solid var(--border); border-radius: var(--radius); background: transparent; cursor: pointer; }
-  .clear-btn:active { background: var(--bg2); }
-  .hint { font-size: 13px; color: var(--text3); text-align: center; padding: 0.75rem 0 0; }
-  /* Category picker modal */
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: flex-end; justify-content: center; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: var(--bg); border-radius: 16px 16px 0 0; width: 100%; max-width: 480px; max-height: 70vh; overflow-y: auto; padding: 1rem; }
-  .modal-title { font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; }
-  .cat-option { display: flex; align-items: center; justify-content: space-between; padding: 12px 4px; border-bottom: 0.5px solid var(--border); cursor: pointer; font-size: 15px; }
-  .cat-option:last-child { border-bottom: none; }
-  .cat-option:active { background: var(--bg2); }
-  .modal-cat-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 12px 4px; border: none; border-bottom: 0.5px solid var(--border); background: transparent; color: var(--text); font-size: 15px; cursor: pointer; text-align: left; }
-  .modal-cat-btn:last-child { border-bottom: none; }
-  .modal-cat-btn:active { background: var(--bg2); }
-  .modal-cat-btn.current { font-weight: 600; }
-  /* Loading */
-  .loading-screen { position: fixed; inset: 0; background: var(--bg3); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; z-index: 100; }
-  .loading-screen p { font-size: 15px; color: var(--text2); }
-  .spinner { width: 28px; height: 28px; border: 2.5px solid var(--border2); border-top-color: var(--text); border-radius: 50%; animation: spin 0.7s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  /* Login */
-  .login-screen { position: fixed; inset: 0; background: var(--bg3); display: none; align-items: center; justify-content: center; z-index: 99; padding: 2rem; }
-  .login-screen.visible { display: flex; }
-  .login-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 2rem 1.5rem; width: 100%; max-width: 360px; }
-  .login-card h2 { font-size: 22px; font-weight: 600; margin-bottom: 0.25rem; }
-  .login-card p { font-size: 14px; color: var(--text2); margin-bottom: 1.5rem; }
-  .login-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
-  .login-field label { font-size: 13px; font-weight: 500; color: var(--text2); }
-  .login-field input { padding: 11px 14px; font-size: 16px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text); outline: none; }
-  .login-field input:focus { border-color: var(--text); }
-  .btn-login { width: 100%; padding: 13px; font-size: 15px; font-weight: 600; border: none; border-radius: var(--radius); background: var(--text); color: var(--bg); cursor: pointer; margin-top: 0.5rem; }
-  .btn-login:active { opacity: 0.8; }
-  .btn-login:disabled { opacity: 0.5; pointer-events: none; }
-  .login-error { font-size: 13px; color: var(--red-text); margin-top: 0.75rem; text-align: center; min-height: 18px; }
-  .logout-btn { font-size: 12px; color: var(--text3); background: none; border: none; cursor: pointer; padding: 2px 0; }
+  @media(prefers-color-scheme:dark){:root{
+    --bg:#1c1c1a;--bg2:#252523;--bg3:#2e2e2b;
+    --text:#f0f0ec;--text2:#a0a09a;--text3:#66665f;
+    --border:rgba(255,255,255,0.10);--border2:rgba(255,255,255,0.20);
+    --green-bg:#173404;--green-text:#c0dd97;
+    --blue-bg:#042c53;--blue-text:#b5d4f4;
+    --red-bg:#501313;--red-text:#f7c1c1;
+  }}
+  html,body{height:100%;background:var(--bg3);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);}
+  .app{max-width:480px;margin:0 auto;min-height:100%;background:var(--bg3);display:flex;flex-direction:column;}
+  .header{background:var(--bg);border-bottom:0.5px solid var(--border);padding:1rem 1rem 0;}
+  .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;}
+  .header h1{font-size:20px;font-weight:600;}
+  .sync-dot{width:8px;height:8px;border-radius:50%;background:#ccc;}
+  .sync-dot.online{background:#3b6d11;}.sync-dot.syncing{background:#854f0b;}
+  .header p{font-size:13px;color:var(--text2);margin-bottom:0.75rem;}
+  .tabs{display:flex;}
+  .tab{flex:1;padding:10px 2px;font-size:13px;text-align:center;border:none;background:transparent;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;}
+  .tab.active{color:var(--text);font-weight:600;border-bottom:2px solid var(--text);}
+  .content{flex:1;padding:1rem;}
+  .view{display:none;}.view.active{display:block;}
+  /* Add / List / Route shared */
+  .add-row{display:flex;gap:8px;margin-bottom:1rem;}
+  .add-row input{flex:1;padding:11px 14px;font-size:16px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none;}
+  .add-row input:focus{border-color:var(--text);}
+  .add-row input::placeholder{color:var(--text3);}
+  .btn-primary{padding:11px 18px;font-size:15px;font-weight:600;border:none;border-radius:var(--radius);background:var(--text);color:var(--bg);cursor:pointer;white-space:nowrap;}
+  .btn-primary:active{opacity:0.8;}
+  .empty{text-align:center;padding:3rem 1rem;color:var(--text2);font-size:15px;line-height:1.6;}
+  .item-card{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:7px;transition:opacity 0.2s;user-select:none;}
+  .item-card.dragging{opacity:0.4;}
+  .item-card.drag-over{border-color:var(--blue-text);background:var(--blue-bg);}
+  .item-card.checked{opacity:0.4;}.item-card.checked .item-name{text-decoration:line-through;}
+  .check-btn{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border2);background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .check-btn.done{background:var(--green-bg);border-color:var(--green-text);}
+  .check-btn.done::after{content:'';display:block;width:6px;height:10px;border:2px solid var(--green-text);border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px);}
+  .item-name{flex:1;font-size:15px;}
+  .badge{font-size:11px;font-weight:500;padding:3px 9px;border-radius:99px;flex-shrink:0;white-space:nowrap;cursor:pointer;}
+  .badge:hover{filter:brightness(0.92);}
+  .del-btn{width:28px;height:28px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;border-radius:6px;line-height:1;}
+  .del-btn:active{background:var(--red-bg);color:var(--red-text);}
+  .cat-group{margin-bottom:1.25rem;}
+  .cat-label{font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text2);margin-bottom:6px;}
+  .progress-wrap{margin-bottom:1rem;}
+  .progress-info{display:flex;justify-content:space-between;font-size:13px;color:var(--text2);margin-bottom:6px;}
+  .progress-track{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--green-text);border-radius:3px;transition:width 0.3s;}
+  .route-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+  .route-header h2{font-size:17px;font-weight:600;}
+  .route-step{display:flex;gap:14px;padding:12px 0;border-bottom:0.5px solid var(--border);}
+  .route-step:last-child{border-bottom:none;}
+  .step-num{width:26px;height:26px;border-radius:50%;background:var(--bg2);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--text2);flex-shrink:0;margin-top:1px;}
+  .step-zone{font-size:15px;font-weight:600;margin-bottom:4px;}
+  .step-items{display:flex;flex-wrap:wrap;gap:6px;}
+  .step-item{font-size:13px;padding:3px 10px;border-radius:99px;background:var(--bg2);color:var(--text);border:0.5px solid var(--border);cursor:pointer;white-space:nowrap;}
+  .step-item.done{text-decoration:line-through;opacity:0.4;}
+  .clear-btn{width:100%;margin-top:1rem;padding:12px;font-size:14px;color:var(--text2);border:0.5px solid var(--border);border-radius:var(--radius);background:transparent;cursor:pointer;}
+  .clear-btn:active{background:var(--bg2);}
+  .hint{font-size:13px;color:var(--text3);text-align:center;padding:0.75rem 0 0;}
+  /* Settings */
+  .settings-section{margin-bottom:1.5rem;}
+  .settings-title{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text2);margin-bottom:0.75rem;}
+  .cat-row{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:6px;user-select:none;}
+  .cat-row.drag-over{border-color:var(--blue-text);background:var(--blue-bg);}
+  .cat-row .drag-handle{color:var(--text3);font-size:18px;cursor:grab;flex-shrink:0;}
+  .cat-row .cat-row-name{flex:1;font-size:15px;font-weight:500;}
+  .cat-row .cat-row-count{font-size:12px;color:var(--text3);flex-shrink:0;}
+  .cat-row .cat-row-expand{font-size:18px;color:var(--text3);background:none;border:none;cursor:pointer;padding:0 2px;flex-shrink:0;}
+  .cat-row .del-btn{flex-shrink:0;}
+  .cat-items-list{margin:0 0 6px 14px;padding:8px 12px;background:var(--bg2);border-radius:var(--radius-sm);border:0.5px solid var(--border);}
+  .dict-item-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);}
+  .dict-item-row:last-child{border-bottom:none;}
+  .dict-item-name{flex:1;font-size:14px;}
+  .dict-item-move{font-size:12px;color:var(--blue-text);background:none;border:none;cursor:pointer;padding:2px 6px;}
+  .dict-item-del{font-size:16px;color:var(--text3);background:none;border:none;cursor:pointer;}
+  .dict-item-del:active{color:var(--red-text);}
+  .add-cat-row{display:flex;gap:8px;margin-top:0.5rem;}
+  .add-cat-row input{flex:1;padding:10px 12px;font-size:15px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none;}
+  .add-cat-row input:focus{border-color:var(--text);}
+  .btn-secondary{padding:10px 16px;font-size:14px;font-weight:600;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);cursor:pointer;white-space:nowrap;}
+  .btn-secondary:active{background:var(--bg2);}
+  /* Modal */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;align-items:flex-end;justify-content:center;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--bg);border-radius:16px 16px 0 0;width:100%;max-width:480px;max-height:70vh;overflow-y:auto;padding:1rem;}
+  .modal-title{font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;}
+  .modal-cat-btn{width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 4px;border:none;border-bottom:0.5px solid var(--border);background:transparent;color:var(--text);font-size:15px;cursor:pointer;text-align:left;}
+  .modal-cat-btn:last-child{border-bottom:none;}
+  .modal-cat-btn:active{background:var(--bg2);}
+  .modal-cat-btn.current{font-weight:600;}
+  /* Loading / Login */
+  .loading-screen{position:fixed;inset:0;background:var(--bg3);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:100;}
+  .loading-screen p{font-size:15px;color:var(--text2);}
+  .spinner{width:28px;height:28px;border:2.5px solid var(--border2);border-top-color:var(--text);border-radius:50%;animation:spin 0.7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .login-screen{position:fixed;inset:0;background:var(--bg3);display:none;align-items:center;justify-content:center;z-index:99;padding:2rem;}
+  .login-screen.visible{display:flex;}
+  .login-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);padding:2rem 1.5rem;width:100%;max-width:360px;}
+  .login-card h2{font-size:22px;font-weight:600;margin-bottom:0.25rem;}
+  .login-card p{font-size:14px;color:var(--text2);margin-bottom:1.5rem;}
+  .login-field{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem;}
+  .login-field label{font-size:13px;font-weight:500;color:var(--text2);}
+  .login-field input{padding:11px 14px;font-size:16px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none;}
+  .login-field input:focus{border-color:var(--text);}
+  .btn-login{width:100%;padding:13px;font-size:15px;font-weight:600;border:none;border-radius:var(--radius);background:var(--text);color:var(--bg);cursor:pointer;margin-top:0.5rem;}
+  .btn-login:active{opacity:0.8;}.btn-login:disabled{opacity:0.5;pointer-events:none;}
+  .login-error{font-size:13px;color:var(--red-text);margin-top:0.75rem;text-align:center;min-height:18px;}
+  .logout-btn{font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;padding:2px 0;}
 </style>
 </head>
 <body>
 
-<div class="loading-screen" id="loading">
-  <div class="spinner"></div>
-  <p>Connecting...</p>
-</div>
+<div class="loading-screen" id="loading"><div class="spinner"></div><p>Connecting...</p></div>
 
-<!-- Login screen -->
 <div class="login-screen" id="login-screen">
   <div class="login-card">
     <h2>Shopping list</h2>
     <p>Sign in to access your list</p>
     <form onsubmit="doLogin();return false;">
-      <div class="login-field">
-        <label>Email</label>
-        <input id="login-email" type="email" placeholder="your@email.com" autocomplete="email" />
-      </div>
-      <div class="login-field">
-        <label>Password</label>
-        <input id="login-password" type="password" placeholder="••••••••" autocomplete="current-password" />
-      </div>
+      <div class="login-field"><label>Email</label><input id="login-email" type="email" placeholder="your@email.com" autocomplete="email"/></div>
+      <div class="login-field"><label>Password</label><input id="login-password" type="password" placeholder="••••••••" autocomplete="current-password"/></div>
       <button class="btn-login" id="login-btn" type="submit">Sign in</button>
     </form>
     <div class="login-error" id="login-error"></div>
   </div>
 </div>
 
-<!-- Category picker modal -->
 <div class="modal-overlay" id="cat-modal" onclick="closeCatModal(event)">
   <div class="modal">
     <div class="modal-title">Change category for: <span id="modal-item-name" style="font-weight:600;color:var(--text)"></span></div>
@@ -162,12 +163,13 @@
       <button class="tab active" onclick="switchTab('add',this)">Add</button>
       <button class="tab" onclick="switchTab('list',this)">List</button>
       <button class="tab" onclick="switchTab('route',this)">Route</button>
+      <button class="tab" onclick="switchTab('settings',this)">Settings</button>
     </div>
   </div>
   <div class="content">
     <div id="view-add" class="view active">
       <div class="add-row">
-        <input id="item-input" type="text" placeholder="e.g. bananas, milk..." autocomplete="off" />
+        <input id="item-input" type="text" placeholder="e.g. bananas, milk..." autocomplete="off"/>
         <button class="btn-primary" onclick="addItem()">Add</button>
       </div>
       <div id="add-list"></div>
@@ -182,12 +184,22 @@
       <div id="route-progress"></div>
       <div id="route-container"></div>
     </div>
+    <div id="view-settings" class="view">
+      <div class="settings-section">
+        <div class="settings-title">Categories & order</div>
+        <div id="settings-cat-list"></div>
+        <div class="add-cat-row">
+          <input id="new-cat-input" type="text" placeholder="New category name..."/>
+          <button class="btn-secondary" onclick="addCategory()">Add</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, set, remove, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, onValue, set, remove, update, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -205,11 +217,58 @@ const db = getDatabase(firebaseApp);
 const auth = getAuth(firebaseApp);
 const itemsRef = ref(db, 'items');
 const dictRef  = ref(db, 'dictionary');
+const catsRef  = ref(db, 'categories');
 
-// Auth state
-let dbUnsubscribe = null;
+// ── Default categories (used if none stored in Firebase yet) ──────────────────
+const DEFAULT_CATEGORIES = [
+  { name:'Hem',             words:['lakan','synål','dynvar','blommor','blomma','kudde','kuddfodral','påslakan'] },
+  { name:'Bygg',            words:['tejp','lim','måla','färg','skruv','spik','borr','verktyg','byggmaterial','handskar','handske'] },
+  { name:'Trädgård',        words:['mull','jord','frön','frö','kruka','plantor','planta','gödsel','trädgård'] },
+  { name:'Teknik',          words:['adapter','kabel','kablar','gas','batteri','sladd','laddare','hörlurar','usb','kontakt'] },
+  { name:'Ost',             words:['riven ost','getost','brie','camembert','cheddar','mozzarella','parmesan','fetaost','feta','gouda','emmental'] },
+  { name:'Frukter',         words:['banan','bananer','päron','äpple','apelsin','citron','lime','mango','vindruvor','jordgubbar','hallon','blåbär','kiwi','ananas','melon','plommon','persika','körsbär','avokado','frukt'] },
+  { name:'Grönsaker',       words:['lök','potatis','tomat','tomater','gurka','paprika','broccoli','blomkål','morötter','morot','sallad','spenat','ärtor','svamp','purjolök','selleri','rödlök','vitlök','ingefära','chili','rödbeta','palsternacka','kålrot','rotsaker'] },
+  { name:'Snacks',          words:['chips','nötter','popcorn','kex','krackers','jordnötter','mandlar','cashewnötter','pistaschnötter','russin','torkad frukt','müslibar','proteinbar','riskaka','majssnacks'] },
+  { name:'Mjölkprodukter',  words:['mjölk','yoghurt','youghurt','keso','gräddfil','grädde','smör','kvarg','fil','filmjölk','havremjölk','oatly','ägg','crème fraîche','cream cheese','kesella','matyoghurt','turkisk yoghurt','turkisk youghurt'] },
+  { name:'Kött',            words:['malet','maletkött','maltkött','köttfärs','kyckling','kycklingfilé','kycklingflarn','fläsk','nötkött','lamm','korv','bacon','skinka','biff','entrecote','lövbiff','köttbullar','fisk','lax','torsk','räkor','sill','tonfisk','fiskpinnar'] },
+  { name:'Pasta',           words:['pasta','penne','makaroner','makaroni','spagetti','spaghetti','tagliatelle','fusilli','rigatoni','lasagne','nudlar'] },
+  { name:'Taco',            words:['tortilla','salsa','tacokrydda','taco','nacho','nachos','guacamole','tacoskal','burrito','enchilada','jalapeño'] },
+  { name:'Torrmat & Såser', words:['kryddor','gröt','majs','ris','quinoa','couscous','bulgur','linser','bönor','kikärtor','konserver','ketchup','senap','majonnäs','soja','olja','olivolja','vinäger','honung','mjöl','socker','salt','buljong','fond','tomatsås','tomatpuré','curry','timjan','oregano','basilika','kanel','havregryn','cornflakes','müsli','flingor','gräddsås'] },
+  { name:'Bröd',            words:['bröd','knäckebröd','käckebröd','bulla','bullor','croissant','toast','levain','surdeg','bagel','pitabröd','tunnbröd','rågbröd','franskbröd','wienerbröd'] },
+  { name:'Sylt & Kaffe',    words:['sylt','peanutbutter','jordnötssmör','kaffe','te','kakao','nutella','marmelad','honung','kaffefilter','nespresso','kaffekapslar'] },
+  { name:'Hundmat',         words:['hundkorv','hundben','hundgodis','hundfoder','hundmat','kattmat','kattsand','kattgodis'] },
+  { name:'Godis',           words:['lösgodis','choklad','skumgodis','lakrits','karamell','gelégodis','gummibjörnar','polly','marabou','daim','snickers'] },
+  { name:'Hygien',          words:['deodorant','schampo','torrschampo','balsam','tvål','duschgel','tandkräm','tandborste','raklödder','rakkniv','bomull','lotion','ansiktskräm','solkräm','hårvax','hårgel'] },
+  { name:'Tvätt',           words:['diskmedel','tvättmedel','sköljmedel','diskmaskinspulver','diskmaskinssalt','torkmedel','allrengöring','toalettpapper','hushållspapper','pappersservetter','sopsäckar','plastpåsar','aluminiumfolie','plastfolie','bakplåtspapper'] },
+  { name:'Kyldisk',         words:['pizza','glass','franskisar','sopprötter','fryspizza','färdigmat','sushi','hummus','tzatziki','dipp','röra','paté','leverpastej'] },
+  { name:'Övrigt',          words:[] },
+];
 
-// Safety timeout — if auth hasn't resolved in 5s, show login
+const BADGE_COLORS = [
+  {bg:'#e6f1fb',text:'#185fa5'},{bg:'#faeeda',text:'#854f0b'},{bg:'#eaf3de',text:'#3b6d11'},
+  {bg:'#eeedfe',text:'#534ab7'},{bg:'#fcebeb',text:'#a32d2d'},{bg:'#e1f5ee',text:'#0f6e56'},
+  {bg:'#faeeda',text:'#854f0b'},{bg:'#e6f1fb',text:'#185fa5'},{bg:'#eaf3de',text:'#3b6d11'},
+  {bg:'#fcebeb',text:'#a32d2d'},{bg:'#eeedfe',text:'#534ab7'},{bg:'#faeeda',text:'#854f0b'},
+  {bg:'#e1f5ee',text:'#0f6e56'},{bg:'#faeeda',text:'#854f0b'},{bg:'#fcebeb',text:'#a32d2d'},
+  {bg:'#eaf3de',text:'#3b6d11'},{bg:'#eeedfe',text:'#534ab7'},{bg:'#e1f5ee',text:'#0f6e56'},
+  {bg:'#e6f1fb',text:'#185fa5'},{bg:'#f5f5f3',text:'#666660'},{bg:'#faeeda',text:'#854f0b'},
+];
+
+// Live state
+let CATEGORIES = [...DEFAULT_CATEGORIES];
+let items = {};
+let dictionary = {};
+let expandedCat = null; // which category is expanded in settings
+let catDragIdx = null;
+let catDragOverIdx = null;
+let itemDragId = null;
+let touchTimer = null;
+let touchDragId = null;
+let modalItemId = null;
+let initialized = false;
+const syncDot = document.getElementById('sync-dot');
+
+// ── Auth ──────────────────────────────────────────────────
 setTimeout(() => {
   if (document.getElementById('loading').style.display !== 'none') {
     document.getElementById('loading').style.display = 'none';
@@ -226,7 +285,6 @@ onAuthStateChanged(auth, user => {
   } else {
     document.getElementById('app').style.display = 'none';
     document.getElementById('login-screen').classList.add('visible');
-    if (dbUnsubscribe) { dbUnsubscribe(); dbUnsubscribe = null; }
   }
 });
 
@@ -236,97 +294,31 @@ async function doLogin() {
   const btn = document.getElementById('login-btn');
   const err = document.getElementById('login-error');
   err.textContent = '';
-  btn.disabled = true;
-  btn.textContent = 'Signing in...';
+  btn.disabled = true; btn.textContent = 'Signing in...';
   try {
     await signInWithEmailAndPassword(auth, email, password);
   } catch(e) {
     err.textContent = 'Incorrect email or password.';
-    btn.disabled = false;
-    btn.textContent = 'Sign in';
+    btn.disabled = false; btn.textContent = 'Sign in';
   }
 }
+async function doLogout() { await signOut(auth); }
 
-async function doLogout() {
-  await signOut(auth);
-}
-
-// doLogin and doLogout are exposed via window below
-
-const CATEGORIES = [
-  { name: 'Hem',             words: ['lakan','synål','dynvar','blommor','blomma','kudde','kuddfodral','påslakan'] },
-  { name: 'Bygg',            words: ['tejp','lim','måla','färg','skruv','spik','borr','verktyg','byggmaterial'] },
-  { name: 'Trädgård',        words: ['mull','jord','frön','frö','kruka','plantor','planta','gödsel','trädgård'] },
-  { name: 'Teknik',          words: ['adapter','kabel','kablar','gas','batteri','sladd','laddare','hörlurar','usb','kontakt'] },
-  { name: 'Ost',             words: ['riven ost','getost','brie','camembert','cheddar','mozzarella','parmesan','fetaost','feta','gouda','emmental'] },
-  { name: 'Frukter',         words: ['banan','bananer','päron','äpple','apelsin','citron','lime','mango','vindruvor','jordgubbar','hallon','blåbär','kiwi','ananas','melon','plommon','persika','körsbär','avokado','frukt'] },
-  { name: 'Grönsaker',       words: ['lök','potatis','tomat','tomater','gurka','paprika','broccoli','blomkål','morötter','morot','sallad','spenat','ärtor','svamp','purjolök','selleri','rödlök','vitlök','ingefära','chili','rödbeta','palsternacka','kålrot','rotsaker'] },
-  { name: 'Snacks',          words: ['chips','nötter','popcorn','kex','krackers','jordnötter','mandlar','cashewnötter','pistaschnötter','russin','torkad frukt','müslibar','proteinbar','riskaka','majssnacks'] },
-  { name: 'Mjölkprodukter',  words: ['mjölk','yoghurt','youghurt','keso','gräddfil','grädde','smör','kvarg','fil','filmjölk','havremjölk','oatly','ägg','crème fraîche','cream cheese','kesella','matyoghurt','turkisk yoghurt','turkisk youghurt'] },
-  { name: 'Kött',            words: ['malet','maletkött','maltkött','köttfärs','kyckling','kycklingfilé','kycklingflarn','fläsk','nötkött','lamm','korv','bacon','skinka','biff','entrecote','lövbiff','köttbullar','fisk','lax','torsk','räkor','sill','tonfisk','fiskpinnar'] },
-  { name: 'Pasta',           words: ['pasta','penne','makaroner','makaroni','spagetti','spaghetti','tagliatelle','fusilli','rigatoni','lasagne','nudlar'] },
-  { name: 'Taco',            words: ['tortilla','salsa','tacokrydda','taco','nacho','nachos','guacamole','tacoskal','burrito','enchilada','jalapeño'] },
-  { name: 'Torrmat & Såser', words: ['kryddor','gröt','majs','ris','quinoa','couscous','bulgur','linser','bönor','kikärtor','konserver','ketchup','senap','majonnäs','soja','olja','olivolja','vinäger','honung','mjöl','socker','salt','buljong','fond','tomatsås','tomatpuré','curry','timjan','oregano','basilika','kanel','havregryn','cornflakes','müsli','flingor','gräddsås'] },
-  { name: 'Bröd',            words: ['bröd','knäckebröd','käckebröd','bulla','bullor','croissant','toast','levain','surdeg','bagel','pitabröd','tunnbröd','rågbröd','franskbröd','wienerbröd'] },
-  { name: 'Sylt & Kaffe',    words: ['sylt','peanutbutter','jordnötssmör','kaffe','te','kakao','nutella','marmelad','honung','kaffefilter','nespresso','kaffekapslar'] },
-  { name: 'Hundmat',         words: ['hundkorv','hundben','hundgodis','hundfoder','hundmat','kattmat','kattsand','kattgodis'] },
-  { name: 'Godis',           words: ['lösgodis','choklad','skumgodis','lakrits','karamell','gelégodis','gummibjörnar','polly','marabou','daim','snickers'] },
-  { name: 'Hygien',          words: ['deodorant','schampo','torrschampo','balsam','tvål','duschgel','tandkräm','tandborste','raklödder','rakkniv','bomull','lotion','ansiktskräm','solkräm','hårvax','hårgel'] },
-  { name: 'Tvätt',           words: ['diskmedel','tvättmedel','sköljmedel','diskmaskinspulver','diskmaskinssalt','torkmedel','allrengöring','toalettpapper','hushållspapper','pappersservetter','sopsäckar','plastpåsar','aluminiumfolie','plastfolie','bakplåtspapper'] },
-  { name: 'Kyldisk',         words: ['pizza','glass','franskisar','sopprötter','fryspizza','färdigmat','sushi','hummus','tzatziki','dipp','röra','paté','leverpastej'] },
-  { name: 'Övrigt',          words: [] },
-];
-
-// Handskar belongs to Bygg in this store, not Hygien
-// (kept separate from keyword list to show intent clearly)
-const EXTRA = { 'handskar': 'Bygg', 'handske': 'Bygg' };
-
-const BADGE_COLORS = [
-  '#e6f1fb','#faeeda','#eaf3de','#eeedfe','#fcebeb','#e1f5ee',
-  '#faeeda','#e6f1fb','#eaf3de','#fcebeb','#eeedfe','#faeeda',
-  '#e1f5ee','#faeeda','#fcebeb','#eaf3de','#eeedfe','#e1f5ee','#faeeda','#f5f5f3'
-];
-const BADGE_TEXT = [
-  '#185fa5','#854f0b','#3b6d11','#534ab7','#a32d2d','#0f6e56',
-  '#854f0b','#185fa5','#3b6d11','#a32d2d','#534ab7','#854f0b',
-  '#0f6e56','#854f0b','#a32d2d','#3b6d11','#534ab7','#0f6e56','#854f0b','#666660'
-];
-
-function getCatIndex(catName) {
-  const i = CATEGORIES.findIndex(c => c.name === catName);
-  return i === -1 ? CATEGORIES.length - 1 : i;
-}
-
-function badgeStyle(catName) {
-  const i = getCatIndex(catName);
-  return `background:${BADGE_COLORS[i % BADGE_COLORS.length]};color:${BADGE_TEXT[i % BADGE_TEXT.length]}`;
-}
-
-function categorize(name) {
-  const n = name.toLowerCase().trim();
-  // Check extra overrides first
-  for (const [word, cat] of Object.entries(EXTRA)) {
-    if (n.includes(word)) return cat;
-  }
-  // Check dictionary overrides from Firebase
-  const key = n.replace(/[^a-zåäö0-9]/g, '_');
-  if (dictionary[key]) return dictionary[key];
-  // Keyword matching
-  for (const cat of CATEGORIES) {
-    if (cat.words.some(w => n.includes(w.toLowerCase()))) return cat.name;
-  }
-  return 'Övrigt';
-}
-
-let items = {};
-let dictionary = {};
-let initialized = false;
-let dragId = null;
-const syncDot = document.getElementById('sync-dot');
-
+// ── Firebase listeners ────────────────────────────────────
 function startListening() {
   initialized = false;
   onValue(dictRef, snap => { dictionary = snap.val() || {}; });
+  onValue(catsRef, snap => {
+    const stored = snap.val();
+    if (stored && Array.isArray(stored) && stored.length > 0) {
+      CATEGORIES = stored;
+    } else {
+      CATEGORIES = [...DEFAULT_CATEGORIES];
+      // Save defaults to Firebase on first run
+      set(catsRef, CATEGORIES);
+    }
+    renderAll();
+  });
   onValue(itemsRef, snap => {
     items = snap.val() || {};
     if (!initialized) { initialized = true; }
@@ -335,243 +327,317 @@ function startListening() {
   });
 }
 
+// ── Category helpers ──────────────────────────────────────
+function getCatIndex(name) {
+  const i = CATEGORIES.findIndex(c => c.name === name);
+  return i === -1 ? CATEGORIES.length - 1 : i;
+}
+function badgeStyle(catName) {
+  const i = getCatIndex(catName) % BADGE_COLORS.length;
+  return `background:${BADGE_COLORS[i].bg};color:${BADGE_COLORS[i].text}`;
+}
+function categorize(name) {
+  const n = name.toLowerCase().trim();
+  const key = n.replace(/[^a-zåäö0-9]/g, '_');
+  if (dictionary[key]) return dictionary[key];
+  for (const cat of CATEGORIES) {
+    if (cat.words && cat.words.some(w => n.includes(w.toLowerCase()))) return cat.name;
+  }
+  return 'Övrigt';
+}
+function saveCats() { syncDot.className='sync-dot syncing'; return set(catsRef, CATEGORIES); }
+function allCatNames() {
+  const known = new Set(CATEGORIES.map(c=>c.name));
+  const extra = [...new Set(Object.values(items).map(i=>i.cat).filter(c=>!known.has(c)))];
+  return [...CATEGORIES.map(c=>c.name), ...extra];
+}
+
+// ── Items ─────────────────────────────────────────────────
 async function addItem() {
   const input = document.getElementById('item-input');
-  const name = input.value.trim();
-  if (!name) return;
+  const name = input.value.trim(); if (!name) return;
   input.value = '';
   const cat = categorize(name);
   const id = 'item_' + Date.now();
   syncDot.className = 'sync-dot syncing';
-  await set(ref(db, 'items/' + id), { id, name, cat, checked: false, order: getCatIndex(cat) * 1000 + Date.now() % 1000 });
+  await set(ref(db,'items/'+id), { id, name, cat, checked:false, order: getCatIndex(cat)*10000 + Date.now()%10000 });
   input.focus();
 }
-
-document.getElementById('item-input').addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
-
-async function deleteItem(id) {
-  syncDot.className = 'sync-dot syncing';
-  await remove(ref(db, 'items/' + id));
-}
-
+async function deleteItem(id) { syncDot.className='sync-dot syncing'; await remove(ref(db,'items/'+id)); }
 async function toggleCheck(id) {
   const item = items[id]; if (!item) return;
-  syncDot.className = 'sync-dot syncing';
-  await update(ref(db, 'items/' + id), { checked: !item.checked });
+  syncDot.className='sync-dot syncing';
+  await update(ref(db,'items/'+id), { checked:!item.checked });
 }
-
 async function clearChecked() {
-  if (!Object.values(items).some(i => i.checked)) return;
-  syncDot.className = 'sync-dot syncing';
-  for (const [id, item] of Object.entries(items)) {
-    if (item.checked) await remove(ref(db, 'items/' + id));
-  }
+  if (!Object.values(items).some(i=>i.checked)) return;
+  syncDot.className='sync-dot syncing';
+  for (const [id,item] of Object.entries(items)) { if (item.checked) await remove(ref(db,'items/'+id)); }
 }
 
-// Category reassignment
-let modalItemId = null;
-
+// ── Category picker modal ─────────────────────────────────
 function openCatModal(id) {
   modalItemId = id;
   const item = items[id]; if (!item) return;
   document.getElementById('modal-item-name').textContent = item.name;
-  const list = document.getElementById('modal-cat-list');
-  list.innerHTML = CATEGORIES.map(c =>
-    `<button class="modal-cat-btn${item.cat === c.name ? ' current' : ''}" onclick="assignCat('${esc(c.name)}')">
-      <span>${esc(c.name)}</span>
-      ${item.cat === c.name ? '<span style="font-size:12px;opacity:0.6">current</span>' : ''}
-    </button>`
-  ).join('');
+  document.getElementById('modal-cat-list').innerHTML = CATEGORIES.map(c =>
+    `<button class="modal-cat-btn${item.cat===c.name?' current':''}" onclick="assignCat('${esc(c.name)}')">
+      <span>${esc(c.name)}</span>${item.cat===c.name?'<span style="font-size:12px;opacity:0.6">current</span>':''}
+    </button>`).join('');
   document.getElementById('cat-modal').classList.add('open');
 }
-
 async function assignCat(catName) {
   if (!modalItemId) return;
-  const item = items[modalItemId];
-  if (!item) return;
-  syncDot.className = 'sync-dot syncing';
-  // Save to dictionary so this name always maps to this category
-  const key = item.name.toLowerCase().trim().replace(/[^a-zåäö0-9]/g, '_');
-  await set(ref(db, 'dictionary/' + key), catName);
-  await update(ref(db, 'items/' + modalItemId), { cat: catName, order: getCatIndex(catName) * 1000 + Date.now() % 1000 });
+  const item = items[modalItemId]; if (!item) return;
+  syncDot.className='sync-dot syncing';
+  const key = item.name.toLowerCase().trim().replace(/[^a-zåäö0-9]/g,'_');
+  await set(ref(db,'dictionary/'+key), catName);
+  await update(ref(db,'items/'+modalItemId), { cat:catName, order:getCatIndex(catName)*10000+Date.now()%10000 });
   closeCatModal();
 }
-
 function closeCatModal(e) {
   if (e && e.target !== document.getElementById('cat-modal')) return;
   document.getElementById('cat-modal').classList.remove('open');
   modalItemId = null;
 }
 
-// Drag and drop
-function onDragStart(e, id) {
-  dragId = id;
-  e.currentTarget.classList.add('dragging');
-  e.dataTransfer.effectAllowed = 'move';
+// ── Settings: category management ────────────────────────
+async function addCategory() {
+  const input = document.getElementById('new-cat-input');
+  const name = input.value.trim(); if (!name) return;
+  if (CATEGORIES.find(c=>c.name===name)) { alert('Category already exists'); return; }
+  input.value = '';
+  CATEGORIES.splice(CATEGORIES.length - 1, 0, { name, words:[] }); // insert before Övrigt
+  await saveCats();
 }
-function onDragEnd(e) {
-  e.currentTarget.classList.remove('dragging');
-  document.querySelectorAll('.item-card').forEach(c => c.classList.remove('drag-over'));
+async function deleteCategory(idx) {
+  const cat = CATEGORIES[idx];
+  if (cat.name === 'Övrigt') { alert("Can't delete Övrigt"); return; }
+  // Move items in this category to Övrigt
+  for (const [id, item] of Object.entries(items)) {
+    if (item.cat === cat.name) await update(ref(db,'items/'+id), { cat:'Övrigt' });
+  }
+  // Also clean dictionary entries
+  for (const [key, val] of Object.entries(dictionary)) {
+    if (val === cat.name) await remove(ref(db,'dictionary/'+key));
+  }
+  CATEGORIES.splice(idx, 1);
+  await saveCats();
+}
+function toggleExpandCat(name) {
+  expandedCat = expandedCat === name ? null : name;
+  renderSettings();
+}
+async function deleteDictItem(key) {
+  syncDot.className='sync-dot syncing';
+  await remove(ref(db,'dictionary/'+key));
+}
+async function moveDictItem(key, currentCat) {
+  // open cat modal for a virtual "item" representing this dict entry
+  // We'll use a simpler inline prompt approach
+  const names = CATEGORIES.map(c=>c.name);
+  const choice = prompt(`Move "${key.replace(/_/g,' ')}" to which category?\n\n${names.map((n,i)=>`${i+1}. ${n}`).join('\n')}\n\nEnter number:`);
+  const idx = parseInt(choice) - 1;
+  if (isNaN(idx) || idx < 0 || idx >= names.length) return;
+  syncDot.className='sync-dot syncing';
+  await set(ref(db,'dictionary/'+key), names[idx]);
+}
+
+// ── Settings: category drag & drop ───────────────────────
+function onCatDragStart(e, idx) {
+  catDragIdx = idx;
+  e.dataTransfer.effectAllowed = 'move';
+  setTimeout(() => { const el = document.querySelector(`[data-catidx="${idx}"]`); if(el) el.style.opacity='0.4'; }, 0);
+}
+function onCatDragOver(e, idx) {
+  e.preventDefault();
+  if (idx === catDragIdx) return;
+  if (catDragOverIdx !== idx) {
+    document.querySelectorAll('.cat-row').forEach(r=>r.classList.remove('drag-over'));
+    catDragOverIdx = idx;
+    const el = document.querySelector(`[data-catidx="${idx}"]`);
+    if (el) el.classList.add('drag-over');
+  }
+}
+async function onCatDrop(e, idx) {
+  e.preventDefault();
+  document.querySelectorAll('.cat-row').forEach(r=>{ r.classList.remove('drag-over'); r.style.opacity=''; });
+  if (catDragIdx === null || catDragIdx === idx) { catDragIdx=null; catDragOverIdx=null; return; }
+  const moved = CATEGORIES.splice(catDragIdx, 1)[0];
+  CATEGORIES.splice(idx, 0, moved);
+  catDragIdx=null; catDragOverIdx=null;
+  await saveCats();
+}
+function onCatDragEnd() {
+  document.querySelectorAll('.cat-row').forEach(r=>{ r.classList.remove('drag-over'); r.style.opacity=''; });
+  catDragIdx=null; catDragOverIdx=null;
+}
+
+// ── Item drag & drop ──────────────────────────────────────
+function onDragStart(e, id) {
+  itemDragId = id;
+  e.dataTransfer.effectAllowed = 'move';
+  setTimeout(()=>{ const el=document.querySelector(`[data-id="${id}"]`); if(el) el.classList.add('dragging'); },0);
 }
 function onDragOver(e, id) {
   e.preventDefault();
-  if (id === dragId) return;
-  document.querySelectorAll('.item-card').forEach(c => c.classList.remove('drag-over'));
-  e.currentTarget.classList.add('drag-over');
+  if (id===itemDragId) return;
+  document.querySelectorAll('.item-card').forEach(el=>el.classList.remove('drag-over'));
+  const el=document.querySelector(`[data-id="${id}"]`); if(el) el.classList.add('drag-over');
 }
-async function onDrop(e, targetId) {
+async function onDrop(e, id) {
   e.preventDefault();
-  e.currentTarget.classList.remove('drag-over');
-  if (!dragId || dragId === targetId) return;
-  const dragItem = items[dragId];
-  const targetItem = items[targetId];
-  if (!dragItem || !targetItem) return;
-  syncDot.className = 'sync-dot syncing';
-  const dragOrder = dragItem.order;
-  await update(ref(db, 'items/' + dragId), { order: targetItem.order });
-  await update(ref(db, 'items/' + targetId), { order: dragOrder });
-  dragId = null;
+  document.querySelectorAll('.item-card').forEach(el=>{ el.classList.remove('dragging','drag-over'); });
+  if (!itemDragId||itemDragId===id) { itemDragId=null; return; }
+  const a=items[itemDragId], b=items[id];
+  if (a&&b) { syncDot.className='sync-dot syncing'; await update(ref(db,'items/'+itemDragId),{order:b.order}); await update(ref(db,'items/'+id),{order:a.order}); }
+  itemDragId=null;
 }
-
-// Touch drag (simple swap on long press)
-let touchTimer = null;
-let touchDragId = null;
+function onDragEnd() { document.querySelectorAll('.item-card').forEach(el=>{ el.classList.remove('dragging','drag-over'); }); itemDragId=null; }
 function onTouchStart(e, id) {
-  touchTimer = setTimeout(() => {
-    touchDragId = id;
-    e.currentTarget.style.opacity = '0.5';
-  }, 400);
+  touchTimer = setTimeout(()=>{ touchDragId=id; e.currentTarget.style.opacity='0.5'; }, 400);
 }
 function onTouchEnd(e, id) {
   clearTimeout(touchTimer);
-  if (touchDragId && touchDragId !== id) {
-    const dragItem = items[touchDragId];
-    const targetItem = items[id];
-    if (dragItem && targetItem) {
-      syncDot.className = 'sync-dot syncing';
-      const tmp = dragItem.order;
-      update(ref(db, 'items/' + touchDragId), { order: targetItem.order });
-      update(ref(db, 'items/' + id), { order: tmp });
-    }
+  if (touchDragId&&touchDragId!==id) {
+    const a=items[touchDragId], b=items[id];
+    if (a&&b) { syncDot.className='sync-dot syncing'; update(ref(db,'items/'+touchDragId),{order:b.order}); update(ref(db,'items/'+id),{order:a.order}); }
   }
-  document.querySelectorAll('.item-card').forEach(c => c.style.opacity = '');
-  touchDragId = null;
+  document.querySelectorAll('.item-card').forEach(c=>c.style.opacity='');
+  touchDragId=null;
 }
 
-function sortedItems() {
-  return Object.values(items).sort((a, b) => getCatIndex(a.cat) - getCatIndex(b.cat) || (a.order||0) - (b.order||0));
-}
-
+// ── Rendering helpers ─────────────────────────────────────
+function sortedItems() { return Object.values(items).sort((a,b)=>getCatIndex(a.cat)-getCatIndex(b.cat)||(a.order||0)-(b.order||0)); }
 function progressHTML() {
-  const all = Object.values(items);
-  const total = all.length, done = all.filter(i => i.checked).length;
-  const pct = total ? Math.round(done / total * 100) : 0;
-  return `<div class="progress-wrap">
-    <div class="progress-info"><span>${done} of ${total} items</span><span>${pct}%</span></div>
-    <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-  </div>`;
+  const all=Object.values(items), total=all.length, done=all.filter(i=>i.checked).length;
+  const pct=total?Math.round(done/total*100):0;
+  return `<div class="progress-wrap"><div class="progress-info"><span>${done} of ${total} items</span><span>${pct}%</span></div><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div></div>`;
 }
-
-function actionButtons() {
-  return `<button class="clear-btn" onclick="clearChecked()">Clear checked items</button>`;
-}
-
+function actionButtons() { return `<button class="clear-btn" onclick="clearChecked()">Clear checked items</button>`; }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-function itemCardHTML(item, showBadge = true) {
-  return `<div class="item-card${item.checked?' checked':''}"
+function itemCardHTML(item, showBadge=true) {
+  return `<div class="item-card${item.checked?' checked':''}" data-id="${item.id}"
     draggable="true"
-    ondragstart="onDragStart(event,'${item.id}')"
-    ondragend="onDragEnd(event)"
-    ondragover="onDragOver(event,'${item.id}')"
-    ondrop="onDrop(event,'${item.id}')"
-    ontouchstart="onTouchStart(event,'${item.id}')"
-    ontouchend="onTouchEnd(event,'${item.id}')">
+    ondragstart="onDragStart(event,'${item.id}')" ondragend="onDragEnd(event)"
+    ondragover="onDragOver(event,'${item.id}')" ondrop="onDrop(event,'${item.id}')"
+    ontouchstart="onTouchStart(event,'${item.id}')" ontouchend="onTouchEnd(event,'${item.id}')">
     <button class="check-btn${item.checked?' done':''}" onclick="toggleCheck('${item.id}')"></button>
     <span class="item-name">${esc(item.name)}</span>
-    ${showBadge ? `<span class="badge" style="${badgeStyle(item.cat)}" onclick="openCatModal('${item.id}')" title="Tap to change category">${esc(item.cat)}</span>` : ''}
+    ${showBadge?`<span class="badge" style="${badgeStyle(item.cat)}" onclick="openCatModal('${item.id}')">${esc(item.cat)}</span>`:''}
     <button class="del-btn" onclick="deleteItem('${item.id}')">×</button>
   </div>`;
 }
 
-function renderAll() { renderAdd(); renderList(); renderRoute(); }
+function renderAll() { renderAdd(); renderList(); renderRoute(); renderSettings(); }
 
 function renderAdd() {
-  const el = document.getElementById('add-list');
-  const arr = Object.values(items).sort((a,b) => (b.order||0) - (a.order||0));
-  if (!arr.length) { el.innerHTML = '<div class="empty">No items yet — add your first one above</div>'; return; }
-  el.innerHTML = arr.map(item => itemCardHTML(item, true)).join('') + actionButtons();
+  const el=document.getElementById('add-list');
+  const arr=Object.values(items).sort((a,b)=>(b.order||0)-(a.order||0));
+  if (!arr.length) { el.innerHTML='<div class="empty">No items yet — add your first one above</div>'; return; }
+  el.innerHTML=arr.map(item=>itemCardHTML(item,true)).join('')+actionButtons();
 }
 
 function renderList() {
-  const prog = document.getElementById('list-progress');
-  const el = document.getElementById('list-container');
-  const arr = sortedItems();
+  const prog=document.getElementById('list-progress'), el=document.getElementById('list-container');
+  const arr=sortedItems();
   if (!arr.length) { prog.innerHTML=''; el.innerHTML='<div class="empty">Add items in the Add tab</div>'; return; }
-  prog.innerHTML = progressHTML();
-  const bycat = {};
-  arr.forEach(item => { if (!bycat[item.cat]) bycat[item.cat]=[]; bycat[item.cat].push(item); });
-  const catNames = new Set(CATEGORIES.map(c => c.name));
-  const extraCats = [...new Set(arr.map(i => i.cat).filter(c => !catNames.has(c)))];
-  const allCats = [...CATEGORIES.map(c => c.name), ...extraCats];
-  el.innerHTML = allCats
-    .filter(name => bycat[name])
-    .map(name => `<div class="cat-group">
-      <div class="cat-label">${esc(name)}</div>
-      ${bycat[name].map(item => itemCardHTML(item, false)).join('')}
-    </div>`).join('') + actionButtons();
+  prog.innerHTML=progressHTML();
+  const bycat={};
+  arr.forEach(item=>{ if(!bycat[item.cat]) bycat[item.cat]=[]; bycat[item.cat].push(item); });
+  el.innerHTML=allCatNames().filter(n=>bycat[n]).map(n=>`<div class="cat-group">
+    <div class="cat-label">${esc(n)}</div>
+    ${bycat[n].map(item=>itemCardHTML(item,false)).join('')}
+  </div>`).join('')+actionButtons();
 }
 
 function renderRoute() {
-  const prog = document.getElementById('route-progress');
-  const el = document.getElementById('route-container');
-  const arr = sortedItems();
+  const prog=document.getElementById('route-progress'), el=document.getElementById('route-container');
+  const arr=sortedItems();
   if (!arr.length) { prog.innerHTML=''; el.innerHTML='<div class="empty">Add items first to see your route</div>'; return; }
-  prog.innerHTML = progressHTML();
-  const bycat = {};
-  arr.forEach(item => { if (!bycat[item.cat]) bycat[item.cat]=[]; bycat[item.cat].push(item); });
-  const catNames2 = new Set(CATEGORIES.map(c => c.name));
-  const extraCats2 = [...new Set(arr.map(i => i.cat).filter(c => !catNames2.has(c)))];
-  const allCats2 = [...CATEGORIES.map(c => c.name), ...extraCats2];
-  let step = 1;
-  el.innerHTML = allCats2
-    .filter(name => bycat[name])
-    .map(name => `<div class="route-step">
-      <div class="step-num">${step++}</div>
-      <div style="flex:1">
-        <div class="step-zone">${esc(name)}</div>
-        <div class="step-items">${bycat[name].map(i =>
-          `<span class="step-item${i.checked?' done':''}" onclick="toggleCheck('${i.id}')">${esc(i.name)}</span>`
-        ).join('')}</div>
-      </div>
-    </div>`).join('') + actionButtons();
+  prog.innerHTML=progressHTML();
+  const bycat={};
+  arr.forEach(item=>{ if(!bycat[item.cat]) bycat[item.cat]=[]; bycat[item.cat].push(item); });
+  let step=1;
+  el.innerHTML=allCatNames().filter(n=>bycat[n]).map(n=>`<div class="route-step">
+    <div class="step-num">${step++}</div>
+    <div style="flex:1">
+      <div class="step-zone">${esc(n)}</div>
+      <div class="step-items">${bycat[n].map(i=>`<span class="step-item${i.checked?' done':''}" onclick="toggleCheck('${i.id}')">${esc(i.name)}</span>`).join('')}</div>
+    </div>
+  </div>`).join('')+actionButtons();
+}
+
+function renderSettings() {
+  const el = document.getElementById('settings-cat-list');
+  if (!el) return;
+  // Build dictionary grouped by category
+  const dictByCat = {};
+  for (const [key, catName] of Object.entries(dictionary)) {
+    if (!dictByCat[catName]) dictByCat[catName] = [];
+    dictByCat[catName].push(key);
+  }
+  const itemsByCat = {};
+  Object.values(items).forEach(item => {
+    if (!itemsByCat[item.cat]) itemsByCat[item.cat] = [];
+    itemsByCat[item.cat].push(item);
+  });
+
+  el.innerHTML = CATEGORIES.map((cat, idx) => {
+    const isExpanded = expandedCat === cat.name;
+    const dictItems = dictByCat[cat.name] || [];
+    const liveItems = itemsByCat[cat.name] || [];
+    const totalCount = dictItems.length;
+
+    return `<div class="cat-row" data-catidx="${idx}"
+        draggable="true"
+        ondragstart="onCatDragStart(event,${idx})" ondragend="onCatDragEnd()"
+        ondragover="onCatDragOver(event,${idx})" ondrop="onCatDrop(event,${idx})">
+      <span class="drag-handle">⠿</span>
+      <span class="cat-row-name">${esc(cat.name)}</span>
+      <span class="cat-row-count">${totalCount} saved</span>
+      <button class="cat-row-expand" onclick="toggleExpandCat('${esc(cat.name)}')">${isExpanded?'▲':'▼'}</button>
+      ${cat.name!=='Övrigt'?`<button class="del-btn" onclick="deleteCategory(${idx})" title="Delete category">×</button>`:''}
+    </div>
+    ${isExpanded ? `<div class="cat-items-list">
+      ${liveItems.length ? `<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);margin-bottom:6px">On current list</div>
+        ${liveItems.map(i=>`<div class="dict-item-row">
+          <span class="dict-item-name">${esc(i.name)}</span>
+          <button class="dict-item-move" onclick="openCatModal('${i.id}')">Move</button>
+          <button class="dict-item-del" onclick="deleteItem('${i.id}')">×</button>
+        </div>`).join('')}
+        <div style="height:8px"></div>` : ''}
+      ${dictItems.length ? `<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);margin-bottom:6px">Remembered words</div>
+        ${dictItems.map(key=>`<div class="dict-item-row">
+          <span class="dict-item-name">${esc(key.replace(/_/g,' '))}</span>
+          <button class="dict-item-move" onclick="moveDictItem('${esc(key)}','${esc(cat.name)}')">Move</button>
+          <button class="dict-item-del" onclick="deleteDictItem('${esc(key)}')">×</button>
+        </div>`).join('')}`
+      : '<div style="font-size:14px;color:var(--text3);padding:4px 0">No remembered words yet</div>'}
+    </div>` : ''}`;
+  }).join('');
 }
 
 function switchTab(tab, btn) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('view-' + tab).classList.add('active');
+  document.getElementById('view-'+tab).classList.add('active');
 }
 
-window.addItem = addItem;
-window.deleteItem = deleteItem;
-window.toggleCheck = toggleCheck;
-window.clearChecked = clearChecked;
-window.switchTab = switchTab;
-window.openCatModal = openCatModal;
-window.assignCat = assignCat;
-window.closeCatModal = closeCatModal;
-window.onDragStart = onDragStart;
-window.onDragEnd = onDragEnd;
-window.onDragOver = onDragOver;
-window.onDrop = onDrop;
-window.onTouchStart = onTouchStart;
-window.onTouchEnd = onTouchEnd;
+document.getElementById('item-input').addEventListener('keydown', e=>{ if(e.key==='Enter') addItem(); });
+document.getElementById('new-cat-input').addEventListener('keydown', e=>{ if(e.key==='Enter') addCategory(); });
 
-window.doLogin = doLogin;
-window.doLogout = doLogout;
+window.addItem=addItem; window.deleteItem=deleteItem; window.toggleCheck=toggleCheck;
+window.clearChecked=clearChecked; window.switchTab=switchTab;
+window.openCatModal=openCatModal; window.assignCat=assignCat; window.closeCatModal=closeCatModal;
+window.onDragStart=onDragStart; window.onDragEnd=onDragEnd; window.onDragOver=onDragOver; window.onDrop=onDrop;
+window.onTouchStart=onTouchStart; window.onTouchEnd=onTouchEnd;
+window.onCatDragStart=onCatDragStart; window.onCatDragEnd=onCatDragEnd;
+window.onCatDragOver=onCatDragOver; window.onCatDrop=onCatDrop;
+window.addCategory=addCategory; window.deleteCategory=deleteCategory;
+window.toggleExpandCat=toggleExpandCat; window.deleteDictItem=deleteDictItem; window.moveDictItem=moveDictItem;
+window.doLogin=doLogin; window.doLogout=doLogout;
 </script>
-
 </body>
 </html>
