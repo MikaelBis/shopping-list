@@ -2,8 +2,6 @@
 
 A free, real-time shared shopping list that sorts your items in the exact order of your supermarket's layout — so you never backtrack through the store again.
 
-**Live app → [mikaelbis.github.io/shopping-list](https://mikaelbis.github.io/shopping-list)**
-
 ---
 
 ## What makes this different?
@@ -51,7 +49,7 @@ The first version of the app takes a practical approach: you define your store's
 
 ## How to use
 
-1. Open the app at [mikaelbis.github.io/shopping-list](https://mikaelbis.github.io/shopping-list)
+1. Open the app at your hosted URL
 2. Register a free account
 3. Go to **Settings → Categories** and drag the categories into the order of your local supermarket
 4. Start adding items — they'll be auto-categorized and sorted instantly
@@ -168,4 +166,3 @@ MIT — free to use, fork, and modify.
 
 ---
 
-*Built in Vaasa, Finland*
