@@ -22,7 +22,7 @@
 <meta name="theme-color" content="#1c1c1a" media="(prefers-color-scheme: dark)"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-title" content="Shopping List"/>
+<meta name="apple-mobile-web-app-title" content="Grocery Route"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -159,7 +159,7 @@ html,body{height:100%;background:var(--bg3);font-family:-apple-system,BlinkMacSy
 
 <div class="auth-screen" id="auth-screen">
   <div class="auth-card">
-    <h2 id="auth-title">Shopping List</h2>
+    <h2 id="auth-title">Grocery Route</h2>
     <p id="auth-subtitle">Sign in to access your list</p>
     <form onsubmit="submitAuth();return false;">
       <div class="auth-field"><label>Email</label><input id="auth-email" type="email" placeholder="your@email.com" autocomplete="email"/></div>
@@ -182,7 +182,7 @@ html,body{height:100%;background:var(--bg3);font-family:-apple-system,BlinkMacSy
 <div class="app" style="display:none" id="app">
   <div class="header">
     <div class="header-top">
-      <h1>Shopping List</h1>
+      <h1>Grocery Route</h1>
       <div style="display:flex;align-items:center;gap:10px">
         <div class="sync-dot" id="sync-dot"></div>
         <button class="logout-btn" onclick="doLogout()">Sign out</button>
